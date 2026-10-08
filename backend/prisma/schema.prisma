@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CITIZEN
+  WORKER
+  ADMIN
+}
+
+enum WorkerStatus {
+  AVAILABLE
+  ON_DUTY
+  OFF_DUTY
+}
+
+enum ComplaintStatus {
+  SUBMITTED
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+  REOPENED
+}
+
+enum ComplaintPriority {
+  LOW
+  MEDIUM
+  HIGH
+  EMERGENCY
+}
+
+enum ScheduleStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  fullName      String    @map("full_name")
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  phone         String?
+  role          UserRole  @default(CITIZEN)
+  address       String?
+  city          String?
+  state         String?
+  pincode       String?
+  profileImage  String?   @map("profile_image")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  worker        Worker?
+  complaints    Complaint[]              @relation("CitizenComplaints")
+  statusChanges ComplaintStatusHistory[]
+  notifications Notification[]
+  feedbacks     Feedback[]
+
+  @@map("users")
+}
+
+model Worker {
+  id                 String       @id @default(uuid())
+  userId             String       @unique @map("user_id")
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeCode       String       @unique @map("employee_code")
+  serviceZoneId      String?      @map("service_zone_id")
+  serviceZone        ServiceZone? @relation(fields: [serviceZoneId], references: [id], onDelete: SetNull)
+  availabilityStatus WorkerStatus @default(AVAILABLE) @map("availability_status")
+  createdAt          DateTime     @default(now()) @map("created_at")
+  updatedAt          DateTime     @updatedAt @map("updated_at")
+
+  assignedComplaints Complaint[]
+  schedules          CollectionSchedule[]
+  completionProofs   CompletionProof[]
+
+  @@map("workers")
+}
+
+model ServiceZone {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workers     Worker[]
+  schedules   CollectionSchedule[]
+  complaints  Complaint[]
+
+  @@map("service_zones")
+}
+
+model CollectionSchedule {
+  id             String         @id @default(uuid())
+  serviceZoneId  String         @map("service_zone_id")
+  serviceZone    ServiceZone    @relation(fields: [serviceZoneId], references: [id], onDelete: Cascade)
+  workerId       String?        @map("worker_id")
+  worker         Worker?        @relation(fields: [workerId], references: [id], onDelete: SetNull)
+  collectionDate DateTime       @map("collection_date")
+  collectionTime String         @map("collection_time")
+  wasteType      String         @map("waste_type")
+  vehicleNumber  String?        @map("vehicle_number")
+  status         ScheduleStatus @default(SCHEDULED)
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  @@map("collection_schedules")
+}
+
+model Complaint {
+  id                 String            @id @default(uuid())
+  complaintReference String            @unique @map("complaint_reference")
+  citizenId          String            @map("citizen_id")
+  citizen            User              @relation("CitizenComplaints", fields: [citizenId], references: [id], onDelete: Cascade)
+  wasteType          String            @map("waste_type")
+  category           String
+  description        String
+  priority           ComplaintPriority @default(MEDIUM)
+  latitude           Float
+  longitude          Float
+  address            String
+  imageUrl           String?           @map("image_url")
+  status             ComplaintStatus   @default(SUBMITTED)
+  assignedWorkerId   String?           @map("assigned_worker_id")
+  assignedWorker     Worker?           @relation(fields: [assignedWorkerId], references: [id], onDelete: SetNull)
+  serviceZoneId      String?           @map("service_zone_id")
+  serviceZone        ServiceZone?      @relation(fields: [serviceZoneId], references: [id], onDelete: SetNull)
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+  completedAt        DateTime?         @map("completed_at")
+
+  statusHistory    ComplaintStatusHistory[]
+  completionProofs CompletionProof[]
+  feedback         Feedback?
+  notifications    Notification[]
+
+  @@index([status])
+  @@index([citizenId])
+  @@index([assignedWorkerId])
+  @@map("complaints")
+}
+
+model ComplaintStatusHistory {
+  id          String           @id @default(uuid())
+  complaintId String           @map("complaint_id")
+  complaint   Complaint        @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  oldStatus   ComplaintStatus? @map("old_status")
+  newStatus   ComplaintStatus  @map("new_status")
+  changedById String           @map("changed_by")
+  changedBy   User             @relation(fields: [changedById], references: [id], onDelete: Cascade)
+  notes       String?
+  changedAt   DateTime         @default(now()) @map("changed_at")
+
+  @@map("complaint_status_history")
+}
+
+model Notification {
+  id          String     @id @default(uuid())
+  userId      String     @map("user_id")
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  complaintId String?    @map("complaint_id")
+  complaint   Complaint? @relation(fields: [complaintId], references: [id], onDelete: SetNull)
+  title       String
+  message     String
+  isRead      Boolean    @default(false) @map("is_read")
+  type        String     @default("SYSTEM")
+  createdAt   DateTime   @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+model Feedback {
+  id             String    @id @default(uuid())
+  userId         String    @map("user_id")
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  complaintId    String    @unique @map("complaint_id")
+  complaint      Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  rating         Int
+  recommendation Boolean   @default(true)
+  comments       String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@map("feedback")
+}
+
+model CompletionProof {
+  id          String    @id @default(uuid())
+  complaintId String    @map("complaint_id")
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  workerId    String    @map("worker_id")
+  worker      Worker    @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  imageUrl    String    @map("image_url")
+  notes       String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("completion_proofs")
+}

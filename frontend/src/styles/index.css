@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #2E7D32;
+  --primary-dark: #1B5E20;
+  --secondary: #43A047;
+  --accent: #1976D2;
+  --background: #F5F8F5;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #F5F8F5;
+  color: #1F2937;
+  -webkit-tap-highlight-color: transparent;
+  font-family: 'Roboto', 'Inter', system-ui, sans-serif;
+}
+
+/* Fix for Leaflet tile z-index and container */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
+  z-index: 10;
+}
+
+/* Material Ripple & Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #E8F5E9;
+}
+::-webkit-scrollbar-thumb {
+  background: #A5D6A7;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2E7D32;
+}
+
+/* Mobile App Container max-width for desktop centered view if desired */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

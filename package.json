@@ -1,0 +1,26 @@
+{
+  "name": "smart-waste-management-system",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Smart Waste Collection and Management System - Full-Stack CSP Application",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build",
+    "db:push": "cd backend && npx prisma db push",
+    "db:seed": "cd backend && node prisma/seed.js",
+    "test": "node --test tests/api.test.js"
+  },
+  "keywords": [
+    "smart-waste",
+    "community-service-project",
+    "react",
+    "vite",
+    "nodejs",
+    "express",
+    "postgresql",
+    "prisma"
+  ],
+  "author": "B.Tech CSE Community Service Project Team",
+  "license": "MIT"
+}

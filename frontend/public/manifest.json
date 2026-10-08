@@ -1,0 +1,17 @@
+{
+  "short_name": "SmartWaste",
+  "name": "Smart Waste Collection & Management System",
+  "description": "Digital platform connecting citizens, sanitation workers, and municipal administration for cleaner communities.",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#F5F8F5",
+  "theme_color": "#2E7D32",
+  "display": "standalone",
+  "orientation": "portrait-primary"
+}
