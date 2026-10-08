@@ -1,5 +1,5 @@
 import prisma from '../config/db.js';
-import { getRelativeUploadPath } from '../config/multer.js';
+import { getRelativeUploadPath, uploadImageToStorage } from '../config/multer.js';
 import { createNotification } from '../services/notificationService.js';
 import { completionProofSchema } from '../validators/schemas.js';
 
@@ -203,7 +203,7 @@ export const uploadCompletionProof = async (req, res, next) => {
       });
     }
 
-    const imageUrl = getRelativeUploadPath(req.file);
+    const imageUrl = await uploadImageToStorage(req.file, 'completion_proofs');
 
     const [proof, updatedComplaint] = await prisma.$transaction([
       prisma.completionProof.create({

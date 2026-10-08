@@ -1,5 +1,5 @@
 import prisma from '../config/db.js';
-import { getRelativeUploadPath } from '../config/multer.js';
+import { getRelativeUploadPath, uploadImageToStorage } from '../config/multer.js';
 import {
   createComplaintSchema,
   updateComplaintStatusSchema,
@@ -7,17 +7,17 @@ import {
 } from '../validators/schemas.js';
 import { createNotification, notifyAdmins } from '../services/notificationService.js';
 
-// Helper to generate reference: SW-2026-XXXX
+// Helper to generate reference: SW-YYYY-XXXX
 const generateReference = async () => {
   const year = new Date().getFullYear();
   const count = await prisma.complaint.count();
-  const sequence = String(count + 1).padStart(4, '0');
-  let ref = `SW-${year}-${sequence}`;
+  let ref = `SW-${year}-${String(count + 1).padStart(4, '0')}`;
   
-  // Verify collision
-  const exists = await prisma.complaint.findUnique({ where: { complaintReference: ref } });
-  if (exists) {
+  // Verify collision in loop
+  let exists = await prisma.complaint.findUnique({ where: { complaintReference: ref } });
+  while (exists) {
     ref = `SW-${year}-${Math.floor(1000 + Math.random() * 9000)}`;
+    exists = await prisma.complaint.findUnique({ where: { complaintReference: ref } });
   }
   return ref;
 };
@@ -29,7 +29,7 @@ export const createComplaint = async (req, res, next) => {
 
     let imageUrl = null;
     if (req.file) {
-      imageUrl = getRelativeUploadPath(req.file);
+      imageUrl = await uploadImageToStorage(req.file, 'complaints');
     }
 
     const complaintReference = await generateReference();
@@ -125,11 +125,14 @@ export const getComplaints = async (req, res, next) => {
       if (!worker) {
         return res.status(403).json({ success: false, message: 'Worker profile not linked.' });
       }
-      where.OR = [
-        { assignedWorkerId: worker.id },
-        { serviceZoneId: worker.serviceZoneId },
-      ];
+      // Workers only access their assigned tasks
+      where.assignedWorkerId = worker.id;
     }
+
+    // Base scope for counting total/pending/completed for this caller
+    const baseScope = {};
+    if (req.user.role === 'CITIZEN') baseScope.citizenId = req.user.id;
+    if (req.user.role === 'WORKER' && req.user.worker) baseScope.assignedWorkerId = req.user.worker.id;
 
     // Filters
     if (status) where.status = status;
@@ -139,17 +142,23 @@ export const getComplaints = async (req, res, next) => {
     if (serviceZoneId) where.serviceZoneId = serviceZoneId;
 
     if (search) {
-      where.OR = [
+      const searchOr = [
         { complaintReference: { contains: search, mode: 'insensitive' } },
         { address: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
       ];
+      if (where.OR) {
+        where.AND = [{ OR: where.OR }, { OR: searchOr }];
+        delete where.OR;
+      } else {
+        where.OR = searchOr;
+      }
     }
 
     const skip = (Number(page) - 1) * Number(limit);
     const take = Number(limit);
 
-    const [total, complaints] = await Promise.all([
+    const [total, complaints, pendingCount, inProgressCount, completedCount, totalScoped] = await Promise.all([
       prisma.complaint.count({ where }),
       prisma.complaint.findMany({
         where,
@@ -171,6 +180,10 @@ export const getComplaints = async (req, res, next) => {
           feedback: true,
         },
       }),
+      prisma.complaint.count({ where: { ...baseScope, status: { in: ['SUBMITTED', 'ASSIGNED'] } } }),
+      prisma.complaint.count({ where: { ...baseScope, status: 'IN_PROGRESS' } }),
+      prisma.complaint.count({ where: { ...baseScope, status: 'COMPLETED' } }),
+      prisma.complaint.count({ where: baseScope }),
     ]);
 
     res.json({
@@ -181,6 +194,12 @@ export const getComplaints = async (req, res, next) => {
         limit: Number(limit),
         totalPages: Math.ceil(total / take) || 1,
         complaints,
+        counts: {
+          total: totalScoped,
+          pending: pendingCount,
+          inProgress: inProgressCount,
+          completed: completedCount,
+        },
       },
     });
   } catch (error) {
@@ -246,6 +265,16 @@ export const getComplaintById = async (req, res, next) => {
       });
     }
 
+    if (req.user.role === 'WORKER') {
+      const worker = req.user.worker;
+      if (!worker || complaint.assignedWorkerId !== worker.id) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied: You can only view tasks assigned to you.',
+        });
+      }
+    }
+
     res.json({
       success: true,
       data: complaint,
@@ -263,6 +292,16 @@ export const updateComplaintStatus = async (req, res, next) => {
     const existing = await prisma.complaint.findUnique({ where: { id } });
     if (!existing) {
       return res.status(404).json({ success: false, message: 'Complaint not found.' });
+    }
+
+    if (req.user.role === 'WORKER') {
+      const worker = req.user.worker;
+      if (!worker || existing.assignedWorkerId !== worker.id) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied: You can only update tasks assigned directly to you.',
+        });
+      }
     }
 
     const completedAt = status === 'COMPLETED' ? new Date() : existing.completedAt;

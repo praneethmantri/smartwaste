@@ -20,6 +20,7 @@ import { useAuth } from '../context/AuthContext';
 import { TopAppBar } from '../components/common/TopAppBar';
 import { BottomNav } from '../components/common/BottomNav';
 import { ComplaintMap } from '../components/maps/ComplaintMap';
+import { resolveImageUrl } from '../utils/image';
 import api from '../api/client';
 
 export const WorkerDashboard = () => {
@@ -281,7 +282,7 @@ export const WorkerDashboard = () => {
                 {/* Citizen Photo Preview if uploaded */}
                 {task.imageUrl && (
                   <div className="h-36 rounded-xl overflow-hidden bg-gray-100 border border-gray-200">
-                    <img src={task.imageUrl} alt="Citizen report" className="w-full h-full object-cover" />
+                    <img src={resolveImageUrl(task.imageUrl)} alt="Citizen report" className="w-full h-full object-cover" />
                   </div>
                 )}
 

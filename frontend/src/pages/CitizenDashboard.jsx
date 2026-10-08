@@ -47,18 +47,21 @@ export const CitizenDashboard = () => {
         const userComplaints = complaintRes.data.complaints || [];
         setComplaints(userComplaints);
 
-        // Compute counts from database response
-        const total = complaintRes.data.total || userComplaints.length;
-        const pending = userComplaints.filter((c) => ['SUBMITTED', 'ASSIGNED'].includes(c.status)).length;
-        const inProgress = userComplaints.filter((c) => c.status === 'IN_PROGRESS').length;
-        const completed = userComplaints.filter((c) => c.status === 'COMPLETED').length;
-
-        setStats({
-          total,
-          pending,
-          inProgress,
-          completed,
-        });
+        // Set counts from accurate database response
+        if (complaintRes.data.counts) {
+          setStats(complaintRes.data.counts);
+        } else {
+          const total = complaintRes.data.total || userComplaints.length;
+          const pending = userComplaints.filter((c) => ['SUBMITTED', 'ASSIGNED'].includes(c.status)).length;
+          const inProgress = userComplaints.filter((c) => c.status === 'IN_PROGRESS').length;
+          const completed = userComplaints.filter((c) => c.status === 'COMPLETED').length;
+          setStats({
+            total,
+            pending,
+            inProgress,
+            completed,
+          });
+        }
 
         // Fetch upcoming schedules
         const scheduleRes = await api.get('/schedules');

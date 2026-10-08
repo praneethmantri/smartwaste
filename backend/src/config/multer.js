@@ -66,3 +66,5 @@ export const getRelativeUploadPath = (file) => {
   const relative = path.relative(path.resolve(__dirname, '../../'), file.path);
   return `/${relative.replace(/\\/g, '/')}`;
 };
+
+export { uploadImageToStorage, isCloudinaryConfigured } from './cloudinary.js';
