@@ -85,9 +85,9 @@ export const FeedbackPage = () => {
       <main className="max-w-xl mx-auto px-4 py-4 space-y-4">
         <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-sm border border-gray-100 space-y-4">
           <div className="border-b pb-3 text-center sm:text-left">
-            <h2 className="text-lg font-bold text-gray-900">Sanitation Service Feedback</h2>
+            <h2 className="text-lg font-bold text-gray-900">{t('feedback')}</h2>
             <p className="text-xs text-gray-500">
-              Your rating directly evaluates the cleanliness and response time of our sanitation staff.
+              {t('feedbackSubtitle')}
             </p>
           </div>
 
@@ -96,15 +96,15 @@ export const FeedbackPage = () => {
               <div className="w-14 h-14 bg-green-100 text-[#2E7D32] rounded-full flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-base font-bold text-gray-900">Thank You for Your Feedback!</h3>
+              <h3 className="text-base font-bold text-gray-900">{t('feedbackSuccessTitle')}</h3>
               <p className="text-xs text-gray-600 max-w-xs mx-auto">
-                Your rating has been saved and shared with the municipal sanitation department.
+                {t('feedbackSuccessMessage')}
               </p>
               <button
                 onClick={() => navigate('/dashboard')}
                 className="mt-4 px-6 py-2.5 bg-[#2E7D32] text-white text-xs font-semibold rounded-xl shadow hover:bg-[#1B5E20] transition"
               >
-                Return to Dashboard
+                {t('home')}
               </button>
             </div>
           ) : (
@@ -118,7 +118,7 @@ export const FeedbackPage = () => {
 
               {/* Citizen Details */}
               <div>
-                <label className="text-xs font-semibold text-gray-700">Citizen Name</label>
+                <label className="text-xs font-semibold text-gray-700">{t('fullName')}</label>
                 <input
                   type="text"
                   disabled
@@ -129,10 +129,10 @@ export const FeedbackPage = () => {
 
               {/* Complaint Selection */}
               <div>
-                <label className="text-xs font-semibold text-gray-700">Resolved Complaint *</label>
+                <label className="text-xs font-semibold text-gray-700">{t('selectComplaintToReview')} *</label>
                 {completedComplaints.length === 0 ? (
                   <div className="mt-1 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
-                    No completed complaints available for review. Feedback can only be given once a sanitation task is completed.
+                    {t('noEligibleComplaintsForReview')}
                   </div>
                 ) : (
                   <select
@@ -143,7 +143,7 @@ export const FeedbackPage = () => {
                   >
                     {completedComplaints.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.complaintReference} - {c.category} ({c.wasteType})
+                        {c.complaintReference} - {t(c.category) || c.category} ({t(c.wasteType) || c.wasteType})
                       </option>
                     ))}
                   </select>
@@ -153,7 +153,7 @@ export const FeedbackPage = () => {
               {/* Star Rating Selection */}
               <div>
                 <label className="text-xs font-semibold text-gray-700 block mb-1">
-                  Overall Rating (1 to 5 Stars) *
+                  {t('serviceRating')} *
                 </label>
                 <div className="flex items-center space-x-2 py-2">
                   {[1, 2, 3, 4, 5].map((s) => (
@@ -173,7 +173,7 @@ export const FeedbackPage = () => {
                     </button>
                   ))}
                   <span className="text-xs font-bold text-gray-700 ml-2">
-                    {rating === 5 ? 'Excellent 🌟' : rating >= 4 ? 'Good 👍' : rating >= 3 ? 'Average' : 'Needs Improvement'}
+                    {rating}/5
                   </span>
                 </div>
               </div>
@@ -181,7 +181,7 @@ export const FeedbackPage = () => {
               {/* Recommend Recommendation Toggle */}
               <div>
                 <label className="text-xs font-semibold text-gray-700 block mb-1">
-                  Would you recommend our sanitation service in your locality?
+                  {t('wouldRecommend')}
                 </label>
                 <div className="grid grid-cols-2 gap-2 mt-1">
                   <button
@@ -194,7 +194,7 @@ export const FeedbackPage = () => {
                     }`}
                   >
                     <ThumbsUp className="w-4 h-4" />
-                    <span>Yes, Highly Recommend</span>
+                    <span>{t('yes')}</span>
                   </button>
 
                   <button
@@ -207,19 +207,19 @@ export const FeedbackPage = () => {
                     }`}
                   >
                     <ThumbsDown className="w-4 h-4" />
-                    <span>No, Need Better Service</span>
+                    <span>{t('no')}</span>
                   </button>
                 </div>
               </div>
 
               {/* Comments */}
               <div>
-                <label className="text-xs font-semibold text-gray-700">Comments or Suggestions</label>
+                <label className="text-xs font-semibold text-gray-700">{t('reviewCommentsLabel')}</label>
                 <textarea
                   rows={3}
                   value={comments}
                   onChange={(e) => setComments(e.target.value)}
-                  placeholder="Share details about worker punctuality, street cleanliness, or segregation advice..."
+                  placeholder={t('reviewCommentsPlaceholder')}
                   className="w-full mt-1 p-3 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32]"
                 />
               </div>
@@ -229,7 +229,7 @@ export const FeedbackPage = () => {
                 disabled={submitting || completedComplaints.length === 0}
                 className="w-full py-3 px-4 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-semibold text-sm rounded-xl shadow transition disabled:opacity-50"
               >
-                {submitting ? 'Submitting Review...' : 'Submit Feedback'}
+                {submitting ? t('submittingReviewBtn') : t('submitReviewBtn')}
               </button>
             </form>
           )}

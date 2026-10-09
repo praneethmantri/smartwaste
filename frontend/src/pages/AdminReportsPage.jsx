@@ -11,9 +11,11 @@ import {
 } from 'lucide-react';
 import { TopAppBar } from '../components/common/TopAppBar';
 import { BottomNav } from '../components/common/BottomNav';
+import { useLanguage } from '../context/LanguageContext';
 import api from '../api/client';
 
 export const AdminReportsPage = () => {
+  const { t } = useLanguage();
   const [downloadingCsv, setDownloadingCsv] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
 
@@ -69,17 +71,17 @@ export const AdminReportsPage = () => {
 
   return (
     <div className="min-h-screen bg-[#F5F8F5] pb-24">
-      <TopAppBar title="Audit Reports & Data Export" showBack={true} />
+      <TopAppBar title={t('auditReportsAndDataExport')} showBack={true} />
 
       <main className="max-w-2xl mx-auto px-4 py-4 space-y-4">
         {/* Banner */}
         <div className="bg-gradient-to-r from-[#2E7D32] to-[#1976D2] rounded-3xl p-5 text-white shadow-md space-y-1">
           <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20">
-            Administrative Audit & Compliance
+            {t('adminAuditCompliance')}
           </span>
-          <h2 className="text-xl font-bold">Official Records Export</h2>
+          <h2 className="text-xl font-bold">{t('officialRecordsExport')}</h2>
           <p className="text-xs text-green-100">
-            Export complete complaint registers, geolocation logs, resolution proofs, and worker audit metrics.
+            {t('exportDescription')}
           </p>
         </div>
 
@@ -90,17 +92,17 @@ export const AdminReportsPage = () => {
               <FileSpreadsheet className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-gray-900">Complaints Spreadsheet (CSV)</h3>
+              <h3 className="text-sm font-bold text-gray-900">{t('complaintsCsv')}</h3>
               <p className="text-xs text-gray-500">
-                Raw relational database export compatible with Microsoft Excel, Google Sheets, and GIS software.
+                {t('complaintsCsvDesc')}
               </p>
             </div>
           </div>
 
           <div className="bg-gray-50 p-3 rounded-2xl text-[11px] text-gray-600 space-y-1 border border-gray-100">
-            <span className="font-semibold text-gray-700">Columns Included:</span>
+            <span className="font-semibold text-gray-700">{t('columnsIncluded')}</span>
             <p>
-              Reference ID, Submission Date, Citizen Name, Phone, Waste Type, Category, Priority, Current Status, Assigned Worker, Municipal Zone, Address, Latitude, Longitude, Resolution Timestamp.
+              {t('columnsList')}
             </p>
           </div>
 
@@ -110,7 +112,7 @@ export const AdminReportsPage = () => {
             className="w-full py-3 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-semibold text-xs rounded-xl shadow transition flex items-center justify-center space-x-2 disabled:opacity-50"
           >
             <Download className="w-4 h-4" />
-            <span>{downloadingCsv ? 'Generating CSV...' : 'Download CSV Dataset'}</span>
+            <span>{downloadingCsv ? t('generatingCsv') : t('downloadCsvDataset')}</span>
           </button>
         </div>
 
@@ -121,17 +123,17 @@ export const AdminReportsPage = () => {
               <FileText className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-gray-900">Official Municipal Audit Report (PDF)</h3>
+              <h3 className="text-sm font-bold text-gray-900">{t('municipalAuditReportPdf')}</h3>
               <p className="text-xs text-gray-500">
-                Formatted printable document for departmental submissions, CSP project evaluation, and viva reviews.
+                {t('municipalAuditReportPdfDesc')}
               </p>
             </div>
           </div>
 
           <div className="bg-gray-50 p-3 rounded-2xl text-[11px] text-gray-600 space-y-1 border border-gray-100">
-            <span className="font-semibold text-gray-700">Report Contents:</span>
+            <span className="font-semibold text-gray-700">{t('reportContents')}</span>
             <p>
-              Executive summary, resolution timelines, categorized incident index, worker dispatch records, and verification confirmation.
+              {t('reportContentsDesc')}
             </p>
           </div>
 
@@ -141,7 +143,7 @@ export const AdminReportsPage = () => {
             className="w-full py-3 bg-[#1976D2] hover:bg-blue-800 text-white font-semibold text-xs rounded-xl shadow transition flex items-center justify-center space-x-2 disabled:opacity-50"
           >
             <Download className="w-4 h-4" />
-            <span>{downloadingPdf ? 'Compiling PDF...' : 'Download PDF Audit Report'}</span>
+            <span>{downloadingPdf ? t('compilingPdf') : t('downloadPdfAuditReport')}</span>
           </button>
         </div>
       </main>

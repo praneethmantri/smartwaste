@@ -1,17 +1,19 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { Loader2 } from 'lucide-react';
 
 export const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, isAuthenticated, loading } = useAuth();
+  const { t } = useLanguage();
   const location = useLocation();
 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#F5F8F5]">
         <Loader2 className="w-10 h-10 text-[#2E7D32] animate-spin mb-3" />
-        <p className="text-gray-600 font-medium text-sm">Verifying Session...</p>
+        <p className="text-gray-600 font-medium text-sm">{t('loading')}</p>
       </div>
     );
   }
@@ -30,9 +32,12 @@ export const ProtectedRoute = ({ children, allowedRoles }) => {
   return children;
 };
 
-export const LoadingSpinner = ({ text = 'Loading...' }) => (
-  <div className="flex flex-col items-center justify-center py-12">
-    <Loader2 className="w-8 h-8 text-[#2E7D32] animate-spin mb-2" />
-    <span className="text-xs text-gray-500 font-medium">{text}</span>
-  </div>
-);
+export const LoadingSpinner = ({ text }) => {
+  const { t } = useLanguage();
+  return (
+    <div className="flex flex-col items-center justify-center py-12">
+      <Loader2 className="w-8 h-8 text-[#2E7D32] animate-spin mb-2" />
+      <span className="text-xs text-gray-500 font-medium">{text || t('loading')}</span>
+    </div>
+  );
+};

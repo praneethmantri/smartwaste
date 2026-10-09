@@ -1,7 +1,15 @@
 node_modules/
 dist/
+frontend/dist/
 .env
+backend/.env
+frontend/.env
+backend/.pgdata/
+.pgdata/
 uploads/*
 !uploads/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
 *.log
 .DS_Store
+.system_generated/

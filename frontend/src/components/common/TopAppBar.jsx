@@ -34,7 +34,7 @@ export const TopAppBar = ({ title, showBack = false }) => {
               {title || t('appTitle')}
             </h1>
             <p className="text-[11px] text-green-100 font-normal">
-              {user ? `${user.role} • ${user.fullName.split(' ')[0]}` : t('tagline')}
+              {user ? `${t(user.role) || user.role} • ${user.fullName?.split(' ')[0]}` : t('tagline')}
             </p>
           </div>
         </div>

@@ -14,10 +14,12 @@ import {
 } from 'lucide-react';
 import { TopAppBar } from '../components/common/TopAppBar';
 import { BottomNav } from '../components/common/BottomNav';
+import { useLanguage } from '../context/LanguageContext';
 import api from '../api/client';
 
 export const AdminComplaintsPage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [complaints, setComplaints] = useState([]);
   const [workers, setWorkers] = useState([]);
@@ -85,7 +87,7 @@ export const AdminComplaintsPage = () => {
 
   return (
     <div className="min-h-screen bg-[#F5F8F5] pb-24">
-      <TopAppBar title="Manage Complaints" showBack={true} />
+      <TopAppBar title={t('adminComplaintsTitle')} showBack={true} />
 
       <main className="max-w-4xl mx-auto px-4 py-4 space-y-4">
         {/* Filter Controls */}
@@ -97,7 +99,7 @@ export const AdminComplaintsPage = () => {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search reference, address, citizen..."
+                placeholder={t('searchComplaintsAdminPlaceholder')}
                 className="w-full pl-9 pr-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl"
               />
             </div>
@@ -105,7 +107,7 @@ export const AdminComplaintsPage = () => {
               onClick={fetchComplaints}
               className="px-4 py-2 bg-[#2E7D32] text-white text-xs font-semibold rounded-xl"
             >
-              Filter
+              {t('filterBtn')}
             </button>
           </div>
 
@@ -115,13 +117,13 @@ export const AdminComplaintsPage = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs"
             >
-              <option value="">All Statuses</option>
-              <option value="SUBMITTED">SUBMITTED</option>
-              <option value="ASSIGNED">ASSIGNED</option>
-              <option value="IN_PROGRESS">IN_PROGRESS</option>
-              <option value="COMPLETED">COMPLETED</option>
-              <option value="REJECTED">REJECTED</option>
-              <option value="REOPENED">REOPENED</option>
+              <option value="">{t('allStatuses')}</option>
+              <option value="SUBMITTED">{t('SUBMITTED')}</option>
+              <option value="ASSIGNED">{t('ASSIGNED')}</option>
+              <option value="IN_PROGRESS">{t('IN_PROGRESS')}</option>
+              <option value="COMPLETED">{t('COMPLETED')}</option>
+              <option value="REJECTED">{t('REJECTED')}</option>
+              <option value="REOPENED">{t('REOPENED')}</option>
             </select>
 
             <select
@@ -129,11 +131,11 @@ export const AdminComplaintsPage = () => {
               onChange={(e) => setPriorityFilter(e.target.value)}
               className="p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs"
             >
-              <option value="">All Priorities</option>
-              <option value="LOW">LOW</option>
-              <option value="MEDIUM">MEDIUM</option>
-              <option value="HIGH">HIGH</option>
-              <option value="EMERGENCY">EMERGENCY</option>
+              <option value="">{t('allPriorities')}</option>
+              <option value="LOW">{t('LOW')}</option>
+              <option value="MEDIUM">{t('MEDIUM')}</option>
+              <option value="HIGH">{t('HIGH')}</option>
+              <option value="EMERGENCY">{t('EMERGENCY')}</option>
             </select>
           </div>
         </div>
@@ -141,11 +143,11 @@ export const AdminComplaintsPage = () => {
         {/* Complaints Table / List */}
         {loading ? (
           <div className="bg-white rounded-2xl p-8 text-center text-xs text-gray-500">
-            Loading grievances...
+            {t('loadingGrievances')}
           </div>
         ) : complaints.length === 0 ? (
           <div className="bg-white rounded-2xl p-8 text-center text-xs text-gray-500">
-            No complaints found.
+            {t('noComplaintsFound')}
           </div>
         ) : (
           <div className="space-y-3">
@@ -160,7 +162,7 @@ export const AdminComplaintsPage = () => {
                       {c.complaintReference}
                     </span>
                     <span className="text-[10px] text-gray-400">•</span>
-                    <span className="text-xs font-semibold text-gray-800">{c.category}</span>
+                    <span className="text-xs font-semibold text-gray-800">{t(c.category) || c.category}</span>
                   </div>
                   <span
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -175,22 +177,22 @@ export const AdminComplaintsPage = () => {
                         : 'bg-red-100 text-red-800'
                     }`}
                   >
-                    {c.status}
+                    {t(c.status) || c.status}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
                   <div>
-                    <span className="text-gray-400">Citizen:</span> {c.citizen?.fullName} ({c.citizen?.phone || 'N/A'})
+                    <span className="text-gray-400">{t('citizen')}:</span> {c.citizen?.fullName} ({c.citizen?.phone || 'N/A'})
                   </div>
                   <div>
-                    <span className="text-gray-400">Worker:</span>{' '}
+                    <span className="text-gray-400">{t('worker')}:</span>{' '}
                     <strong className="text-gray-800">
-                      {c.assignedWorker?.user?.fullName || 'Unassigned'}
+                      {c.assignedWorker?.user?.fullName || t('unassigned')}
                     </strong>
                   </div>
                   <div className="col-span-2 truncate">
-                    <span className="text-gray-400">Address:</span> {c.address}
+                    <span className="text-gray-400">{t('address')}:</span> {c.address}
                   </div>
                 </div>
 
@@ -200,7 +202,7 @@ export const AdminComplaintsPage = () => {
                     className="inline-flex items-center space-x-1 text-xs text-blue-600 font-semibold hover:underline"
                   >
                     <Eye className="w-3.5 h-3.5" />
-                    <span>View Full Details</span>
+                    <span>{t('viewFullDetails')}</span>
                   </button>
 
                   <button
@@ -211,7 +213,7 @@ export const AdminComplaintsPage = () => {
                     className="inline-flex items-center space-x-1 px-3 py-1 bg-[#2E7D32] hover:bg-[#1B5E20] text-white text-xs font-semibold rounded-xl shadow transition"
                   >
                     <UserCheck className="w-3.5 h-3.5" />
-                    <span>{c.assignedWorkerId ? 'Re-assign Worker' : 'Assign Worker'}</span>
+                    <span>{c.assignedWorkerId ? t('reassignWorker') : t('assignWorker')}</span>
                   </button>
                 </div>
               </div>
@@ -224,7 +226,7 @@ export const AdminComplaintsPage = () => {
           <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-xl">
               <div className="flex items-center justify-between border-b pb-2">
-                <h3 className="text-base font-bold text-gray-900">Assign Worker</h3>
+                <h3 className="text-base font-bold text-gray-900">{t('assignWorkerTitle')}</h3>
                 <button
                   type="button"
                   onClick={() => setSelectedComplaint(null)}
@@ -235,14 +237,14 @@ export const AdminComplaintsPage = () => {
               </div>
 
               <p className="text-xs text-gray-600">
-                Complaint: <strong>{selectedComplaint.complaintReference}</strong>
+                {t('complaints')}: <strong>{selectedComplaint.complaintReference}</strong>
                 <br />
-                Location: {selectedComplaint.address}
+                {t('address')}: {selectedComplaint.address}
               </p>
 
               <form onSubmit={handleAssignSubmit} className="space-y-3">
                 <div>
-                  <label className="text-xs font-semibold text-gray-700">Select Sanitation Personnel *</label>
+                  <label className="text-xs font-semibold text-gray-700">{t('selectPersonnel')}</label>
                   <select
                     value={selectedWorkerId}
                     onChange={(e) => setSelectedWorkerId(e.target.value)}
@@ -258,12 +260,12 @@ export const AdminComplaintsPage = () => {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-gray-700">Supervisor Dispatch Instructions</label>
+                  <label className="text-xs font-semibold text-gray-700">{t('supervisorInstructions')}</label>
                   <textarea
                     rows={2}
                     value={assignNotes}
                     onChange={(e) => setAssignNotes(e.target.value)}
-                    placeholder="Priority instruction for on-site crew..."
+                    placeholder={t('instructionsPlaceholder')}
                     className="w-full mt-1 p-2 text-xs bg-gray-50 border border-gray-200 rounded-xl"
                   />
                 </div>
@@ -273,7 +275,7 @@ export const AdminComplaintsPage = () => {
                   disabled={assignLoading}
                   className="w-full py-2.5 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-semibold text-xs rounded-xl shadow transition disabled:opacity-50"
                 >
-                  {assignLoading ? 'Dispatching...' : 'Confirm Assignment'}
+                  {assignLoading ? t('dispatching') : t('assignWorkerBtn')}
                 </button>
               </form>
             </div>

@@ -16,6 +16,7 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { TopAppBar } from '../components/common/TopAppBar';
 import { BottomNav } from '../components/common/BottomNav';
 import { ComplaintMap } from '../components/maps/ComplaintMap';
@@ -25,6 +26,7 @@ export const ComplaintDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const [complaint, setComplaint] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -99,10 +101,10 @@ export const ComplaintDetailsPage = () => {
 
   // Visual Stepper configuration
   const steps = [
-    { key: 'SUBMITTED', label: 'Submitted' },
-    { key: 'ASSIGNED', label: 'Assigned' },
-    { key: 'IN_PROGRESS', label: 'In Progress' },
-    { key: 'COMPLETED', label: 'Resolved' },
+    { key: 'SUBMITTED', label: t('SUBMITTED') },
+    { key: 'ASSIGNED', label: t('ASSIGNED') },
+    { key: 'IN_PROGRESS', label: t('IN_PROGRESS') },
+    { key: 'COMPLETED', label: t('COMPLETED') },
   ];
 
   const currentStepIndex = steps.findIndex((s) => s.key === complaint.status);
@@ -110,14 +112,14 @@ export const ComplaintDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-[#F5F8F5] pb-24">
-      <TopAppBar title={`Complaint ${complaint.complaintReference}`} showBack={true} />
+      <TopAppBar title={`${t('complaintDetailsTitle')} - ${complaint.complaintReference}`} showBack={true} />
 
       <main className="max-w-3xl mx-auto px-4 py-4 space-y-4">
         {/* Header Card */}
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 space-y-3">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <span className="text-[11px] text-gray-500 uppercase font-semibold">Complaint ID</span>
+              <span className="text-[11px] text-gray-500 uppercase font-semibold">{t('referenceId')}</span>
               <h2 className="text-xl font-extrabold text-[#2E7D32] font-mono">
                 {complaint.complaintReference}
               </h2>
@@ -138,7 +140,7 @@ export const ComplaintDetailsPage = () => {
                     : 'bg-red-100 text-red-800'
                 }`}
               >
-                {complaint.status.replace('_', ' ')}
+                {t(complaint.status) || complaint.status.replace('_', ' ')}
               </span>
               <p className="text-[10px] text-gray-400 mt-1">
                 {new Date(complaint.createdAt).toLocaleString()}
@@ -189,7 +191,7 @@ export const ComplaintDetailsPage = () => {
             >
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>
-                Status is marked as <strong>{complaint.status}</strong>. Refer to status history notes below.
+                {t('status')}: <strong>{t(complaint.status) || complaint.status}</strong>
               </span>
             </div>
           )}
@@ -197,31 +199,31 @@ export const ComplaintDetailsPage = () => {
 
         {/* Complaint Details Card */}
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 space-y-4">
-          <h3 className="text-sm font-bold text-gray-900 border-b pb-2">Issue Information</h3>
+          <h3 className="text-sm font-bold text-gray-900 border-b pb-2">{t('complaintDetails')}</h3>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
-              <span className="text-gray-500 font-medium">Classification</span>
-              <p className="font-semibold text-gray-800 mt-0.5">{complaint.wasteType}</p>
+              <span className="text-gray-500 font-medium">{t('wasteType')}</span>
+              <p className="font-semibold text-gray-800 mt-0.5">{t(complaint.wasteType) || complaint.wasteType}</p>
             </div>
             <div>
-              <span className="text-gray-500 font-medium">Grievance Category</span>
-              <p className="font-semibold text-gray-800 mt-0.5">{complaint.category}</p>
+              <span className="text-gray-500 font-medium">{t('category')}</span>
+              <p className="font-semibold text-gray-800 mt-0.5">{t(complaint.category) || complaint.category}</p>
             </div>
             <div>
-              <span className="text-gray-500 font-medium">Priority</span>
-              <p className="font-semibold text-gray-800 mt-0.5">{complaint.priority}</p>
+              <span className="text-gray-500 font-medium">{t('priority')}</span>
+              <p className="font-semibold text-gray-800 mt-0.5">{t(complaint.priority) || complaint.priority}</p>
             </div>
             <div>
-              <span className="text-gray-500 font-medium">Service Zone</span>
+              <span className="text-gray-500 font-medium">{t('serviceZone')}</span>
               <p className="font-semibold text-gray-800 mt-0.5">
-                {complaint.serviceZone?.name || 'Unassigned Ward'}
+                {complaint.serviceZone?.name || t('unassignedWorker')}
               </p>
             </div>
           </div>
 
           <div>
-            <span className="text-xs text-gray-500 font-medium">Description</span>
+            <span className="text-xs text-gray-500 font-medium">{t('description')}</span>
             <p className="text-xs text-gray-700 mt-1 bg-gray-50 p-3 rounded-xl border border-gray-100 leading-relaxed">
               {complaint.description}
             </p>
@@ -231,7 +233,7 @@ export const ComplaintDetailsPage = () => {
           {complaint.imageUrl && (
             <div>
               <span className="text-xs text-gray-500 font-medium block mb-1.5">
-                Citizen Uploaded Photograph
+                {t('uploadPhoto')}
               </span>
               <div className="h-48 sm:h-64 rounded-2xl overflow-hidden border border-gray-200 bg-gray-100">
                 <img
@@ -249,7 +251,7 @@ export const ComplaintDetailsPage = () => {
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-1.5">
               <MapPin className="w-4 h-4 text-[#2E7D32]" />
-              <span>Location Coordinates</span>
+              <span>{t('captureLocation')}</span>
             </h3>
             <a
               href={`https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=%3B${complaint.latitude}%2C${complaint.longitude}`}
@@ -258,7 +260,7 @@ export const ComplaintDetailsPage = () => {
               className="inline-flex items-center space-x-1 text-xs text-[#1976D2] font-semibold hover:underline"
             >
               <Navigation className="w-3.5 h-3.5" />
-              <span>Navigate (OSM)</span>
+              <span>{t('getDirections')}</span>
             </a>
           </div>
 
@@ -274,7 +276,7 @@ export const ComplaintDetailsPage = () => {
           <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 space-y-3">
             <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-1.5">
               <Truck className="w-4 h-4 text-[#2E7D32]" />
-              <span>Assigned Sanitation Personnel</span>
+              <span>{t('assignedWorker')}</span>
             </h3>
             <div className="flex items-center justify-between p-3 bg-emerald-50/70 border border-emerald-100 rounded-2xl">
               <div className="space-y-0.5">
@@ -282,10 +284,10 @@ export const ComplaintDetailsPage = () => {
                   {complaint.assignedWorker.user?.fullName}
                 </h4>
                 <p className="text-[11px] text-gray-600">
-                  Employee Code: {complaint.assignedWorker.employeeCode}
+                  {t('employeeCode')}: {complaint.assignedWorker.employeeCode}
                 </p>
                 <p className="text-[11px] text-gray-600">
-                  Phone: {complaint.assignedWorker.user?.phone || 'On Municipal Radiocomm'}
+                  {t('phone')}: {complaint.assignedWorker.user?.phone || 'N/A'}
                 </p>
               </div>
               <span className="text-[10px] font-bold px-2 py-1 rounded bg-green-200 text-green-900">
@@ -300,7 +302,7 @@ export const ComplaintDetailsPage = () => {
           <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 space-y-3">
             <h3 className="text-sm font-bold text-green-800 flex items-center space-x-1.5">
               <CheckCircle2 className="w-4 h-4 text-green-600" />
-              <span>Resolution & Clearance Verification Proof</span>
+              <span>{t('clearanceProof')}</span>
             </h3>
             {complaint.completionProofs.map((proof) => (
               <div key={proof.id} className="space-y-2 border border-green-200 rounded-2xl p-3 bg-green-50/50">
@@ -308,10 +310,10 @@ export const ComplaintDetailsPage = () => {
                   <img src={proof.imageUrl} alt="Completion Proof" className="w-full h-full object-cover" />
                 </div>
                 <p className="text-xs text-gray-700 italic">
-                  Worker Note: "{proof.notes || 'Cleared site completely.'}"
+                  {t('clearanceNotes')}: "{proof.notes || ''}"
                 </p>
                 <p className="text-[10px] text-gray-500">
-                  Verified On: {new Date(proof.createdAt).toLocaleString()}
+                  {t('resolvedOn')}: {new Date(proof.createdAt).toLocaleString()}
                 </p>
               </div>
             ))}
@@ -322,7 +324,7 @@ export const ComplaintDetailsPage = () => {
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 space-y-3">
           <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-1.5">
             <Clock className="w-4 h-4 text-[#2E7D32]" />
-            <span>Audit Trail & Status History</span>
+            <span>{t('statusTimeline')}</span>
           </h3>
 
           <div className="space-y-3 pl-2 border-l-2 border-green-200 ml-2">
@@ -330,14 +332,14 @@ export const ComplaintDetailsPage = () => {
               <div key={h.id} className="relative pl-4 text-xs space-y-0.5">
                 <div className="absolute -left-[13px] top-1 w-2.5 h-2.5 rounded-full bg-[#2E7D32] border-2 border-white"></div>
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-gray-800">{h.newStatus.replace('_', ' ')}</span>
+                  <span className="font-bold text-gray-800">{t(h.newStatus) || h.newStatus.replace('_', ' ')}</span>
                   <span className="text-[10px] text-gray-400">
                     {new Date(h.changedAt).toLocaleString()}
                   </span>
                 </div>
                 <p className="text-gray-600 text-[11px]">{h.notes}</p>
                 <p className="text-[10px] text-gray-400 font-medium">
-                  Updated by: {h.changedBy?.fullName} ({h.changedBy?.role})
+                  {h.changedBy?.fullName} ({t(h.changedBy?.role) || h.changedBy?.role})
                 </p>
               </div>
             ))}
@@ -350,7 +352,7 @@ export const ComplaintDetailsPage = () => {
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-1.5">
                 <Star className="w-4 h-4 text-yellow-500" />
-                <span>Citizen Service Review</span>
+                <span>{t('feedback')}</span>
               </h3>
             </div>
 
@@ -360,7 +362,7 @@ export const ComplaintDetailsPage = () => {
                   {[...Array(complaint.feedback.rating)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   ))}
-                  <span className="ml-1 text-gray-800">({complaint.feedback.rating}/5 Stars)</span>
+                  <span className="ml-1 text-gray-800">({complaint.feedback.rating}/5)</span>
                 </div>
                 {complaint.feedback.comments && (
                   <p className="text-gray-700 italic">"{complaint.feedback.comments}"</p>
@@ -371,11 +373,9 @@ export const ComplaintDetailsPage = () => {
                 onClick={() => navigate('/feedback', { state: { complaintId: complaint.id } })}
                 className="w-full py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold text-xs rounded-xl shadow transition"
               >
-                Submit Citizen Feedback & Rating
+                {t('giveFeedback')}
               </button>
-            ) : (
-              <p className="text-xs text-gray-500">Citizen feedback pending submission.</p>
-            )}
+            ) : null}
           </div>
         )}
 
@@ -387,7 +387,7 @@ export const ComplaintDetailsPage = () => {
               className="inline-flex items-center space-x-1.5 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-xl transition"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Waste Still Not Cleaned? Reopen Complaint</span>
+              <span>{t('reopenComplaint')}</span>
             </button>
           </div>
         )}
@@ -396,16 +396,16 @@ export const ComplaintDetailsPage = () => {
         {showReopenModal && (
           <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-xl">
-              <h3 className="text-base font-bold text-gray-900">Reopen Complaint</h3>
+              <h3 className="text-base font-bold text-gray-900">{t('reopenModalTitle')}</h3>
               <p className="text-xs text-gray-600">
-                Please describe why the waste clearance was incomplete or requires follow-up sanitation.
+                {t('reopenExplanation')}
               </p>
 
               <textarea
                 rows={3}
                 value={reopenNotes}
                 onChange={(e) => setReopenNotes(e.target.value)}
-                placeholder="E.g., Garbage was only partially cleared from the corner..."
+                placeholder={t('reopenPlaceholder')}
                 className="w-full p-3 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2E7D32]"
               />
 
@@ -415,7 +415,7 @@ export const ComplaintDetailsPage = () => {
                   onClick={() => setShowReopenModal(false)}
                   className="flex-1 py-2 text-xs font-semibold bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition"
                 >
-                  Cancel
+                  {t('cancel')}
                 </button>
                 <button
                   type="button"
@@ -423,7 +423,7 @@ export const ComplaintDetailsPage = () => {
                   disabled={actionLoading}
                   className="flex-1 py-2 text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow transition"
                 >
-                  {actionLoading ? 'Reopening...' : 'Confirm Reopen'}
+                  {actionLoading ? t('reopeningBtn') : t('confirmReopenBtn')}
                 </button>
               </div>
             </div>

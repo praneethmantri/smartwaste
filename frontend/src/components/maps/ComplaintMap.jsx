@@ -2,6 +2,7 @@ import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { ExternalLink, Navigation } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const createColoredIcon = (color) => {
   return L.divIcon({
@@ -22,6 +23,7 @@ const statusColors = {
 };
 
 export const ComplaintMap = ({ complaints = [], center, zoom = 13, height = '360px' }) => {
+  const { t } = useLanguage();
   const defaultCenter = center || (complaints.length > 0 && complaints[0].latitude
     ? [complaints[0].latitude, complaints[0].longitude]
     : [17.7215, 83.2985]);
@@ -56,10 +58,10 @@ export const ComplaintMap = ({ complaints = [], center, zoom = 13, height = '360
                       className="text-[9px] font-bold px-1.5 py-0.5 rounded text-white"
                       style={{ backgroundColor: color }}
                     >
-                      {c.status}
+                      {t(c.status) || c.status}
                     </span>
                   </div>
-                  <p className="text-xs font-semibold text-gray-800">{c.category}</p>
+                  <p className="text-xs font-semibold text-gray-800">{t(c.category) || c.category}</p>
                   <p className="text-[11px] text-gray-600 line-clamp-2 mt-0.5">{c.description}</p>
                   <p className="text-[10px] text-gray-500 mt-1 italic">{c.address}</p>
 
@@ -71,7 +73,7 @@ export const ComplaintMap = ({ complaints = [], center, zoom = 13, height = '360
                       className="inline-flex items-center space-x-1 text-[11px] text-[#1976D2] hover:underline font-medium"
                     >
                       <Navigation className="w-3 h-3" />
-                      <span>OSM Navigate</span>
+                      <span>{t('osmNavigate')}</span>
                     </a>
                     <a
                       href={gmapsUrl}
@@ -79,7 +81,7 @@ export const ComplaintMap = ({ complaints = [], center, zoom = 13, height = '360
                       rel="noopener noreferrer"
                       className="inline-flex items-center space-x-0.5 text-[10px] text-gray-600 hover:text-black font-medium"
                     >
-                      <span>Maps</span>
+                      <span>{t('maps')}</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>

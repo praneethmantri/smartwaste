@@ -56,19 +56,19 @@ export const ComplaintTrackingPage = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'SUBMITTED':
-        return <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Submitted</span>;
+        return <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-[10px] font-bold">{t('SUBMITTED')}</span>;
       case 'ASSIGNED':
-        return <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Assigned</span>;
+        return <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-[10px] font-bold">{t('ASSIGNED')}</span>;
       case 'IN_PROGRESS':
-        return <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-bold">In Progress</span>;
+        return <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-bold">{t('IN_PROGRESS')}</span>;
       case 'COMPLETED':
-        return <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Completed</span>;
+        return <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-[10px] font-bold">{t('COMPLETED')}</span>;
       case 'REJECTED':
-        return <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-[10px] font-bold">Rejected</span>;
+        return <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-[10px] font-bold">{t('REJECTED')}</span>;
       case 'REOPENED':
-        return <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Reopened</span>;
+        return <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full text-[10px] font-bold">{t('REOPENED')}</span>;
       default:
-        return <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full text-[10px] font-bold">{status}</span>;
+        return <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full text-[10px] font-bold">{t(status) || status}</span>;
     }
   };
 
@@ -86,7 +86,7 @@ export const ComplaintTrackingPage = () => {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by ID (e.g. SW-2026), area, or keyword..."
+                placeholder={t('searchComplaintsPlaceholder')}
                 className="w-full pl-9 pr-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
               />
             </div>
@@ -94,19 +94,19 @@ export const ComplaintTrackingPage = () => {
               type="submit"
               className="px-3 py-2 bg-[#2E7D32] text-white text-xs font-semibold rounded-xl hover:bg-[#1B5E20] transition"
             >
-              Search
+              {t('search')}
             </button>
           </form>
 
           {/* Quick Status Filters */}
           <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 text-xs">
             {[
-              { id: '', label: 'All' },
-              { id: 'SUBMITTED', label: 'Submitted' },
-              { id: 'ASSIGNED', label: 'Assigned' },
-              { id: 'IN_PROGRESS', label: 'In Progress' },
-              { id: 'COMPLETED', label: 'Completed' },
-              { id: 'REOPENED', label: 'Reopened' },
+              { id: '', label: t('all') },
+              { id: 'SUBMITTED', label: t('SUBMITTED') },
+              { id: 'ASSIGNED', label: t('ASSIGNED') },
+              { id: 'IN_PROGRESS', label: t('IN_PROGRESS') },
+              { id: 'COMPLETED', label: t('COMPLETED') },
+              { id: 'REOPENED', label: t('REOPENED') },
             ].map((pill) => (
               <button
                 key={pill.id}
@@ -126,22 +126,19 @@ export const ComplaintTrackingPage = () => {
         {/* Complaints Listing */}
         {loading ? (
           <div className="bg-white rounded-2xl p-8 text-center text-xs text-gray-500 shadow-sm">
-            Loading complaint tracker records...
+            {t('loading')}
           </div>
         ) : complaints.length === 0 ? (
           <div className="bg-white rounded-3xl p-8 text-center shadow-sm border border-gray-100 space-y-3">
             <AlertCircle className="w-8 h-8 text-gray-400 mx-auto" />
-            <p className="text-sm font-semibold text-gray-800">No complaints found matching criteria.</p>
-            <p className="text-xs text-gray-500">
-              Clear filters or submit a new grievance to track sanitation progress.
-            </p>
+            <p className="text-sm font-semibold text-gray-800">{t('noComplaintsFound')}</p>
             {user?.role === 'CITIZEN' && (
               <button
                 onClick={() => navigate('/raise-complaint')}
                 className="inline-flex items-center space-x-1 px-4 py-2 bg-[#2E7D32] text-white text-xs font-semibold rounded-xl shadow hover:bg-[#1B5E20] transition"
               >
                 <PlusCircle className="w-3.5 h-3.5" />
-                <span>Raise Complaint</span>
+                <span>{t('raiseComplaint')}</span>
               </button>
             )}
           </div>
@@ -159,13 +156,13 @@ export const ComplaintTrackingPage = () => {
                       {c.complaintReference}
                     </span>
                     <span className="text-[10px] text-gray-400">•</span>
-                    <span className="text-xs font-semibold text-gray-800">{c.wasteType}</span>
+                    <span className="text-xs font-semibold text-gray-800">{t(c.wasteType) || c.wasteType}</span>
                   </div>
                   {getStatusBadge(c.status)}
                 </div>
 
                 <div className="space-y-1">
-                  <h4 className="text-xs font-bold text-gray-900">{c.category}</h4>
+                  <h4 className="text-xs font-bold text-gray-900">{t(c.category) || c.category}</h4>
                   <p className="text-xs text-gray-600 line-clamp-2">{c.description}</p>
                 </div>
 

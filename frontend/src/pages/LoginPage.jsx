@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, Eye, EyeOff, Lock, Mail, ArrowRight, Shield, User, Wrench, AlertCircle, Sparkles } from 'lucide-react';
+import { Trash2, Eye, EyeOff, Lock, Mail, ArrowRight, Shield, User, Wrench, AlertCircle, Sparkles, Globe } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { t } = useLanguage();
+  const { lang, setLanguage, t } = useLanguage();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -50,7 +50,23 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F8F5] flex flex-col justify-center px-4 py-8">
+    <div className="min-h-screen bg-[#F5F8F5] flex flex-col justify-center px-4 py-8 relative">
+      {/* Language Switcher in Top Right */}
+      <div className="absolute top-4 right-4 flex items-center space-x-1">
+        <div className="relative">
+          <select
+            value={lang}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="bg-white text-gray-800 text-xs font-medium py-1.5 px-2.5 rounded-xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2E7D32] appearance-none cursor-pointer pr-6"
+          >
+            <option value="en">English</option>
+            <option value="te">తెలుగు (TE)</option>
+            <option value="hi">हिन्दी (HI)</option>
+          </select>
+          <Globe className="w-3.5 h-3.5 text-gray-400 absolute right-1.5 top-2.5 pointer-events-none" />
+        </div>
+      </div>
+
       <div className="max-w-md w-full mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
@@ -58,10 +74,10 @@ export const LoginPage = () => {
             <Trash2 className="w-8 h-8" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
-            Sign In to Smart Waste
+            {t('loginHeader')}
           </h2>
           <p className="text-xs text-gray-600">
-            Citizen, Sanitation Worker & Administrator Portal
+            {t('loginCitizenWorkerAdmin')}
           </p>
         </div>
 
@@ -77,7 +93,7 @@ export const LoginPage = () => {
           <form onSubmit={handleLogin} className="space-y-4">
             {/* Email Field */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-gray-700">Email Address</label>
+              <label className="text-xs font-semibold text-gray-700">{t('email')}</label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5 pointer-events-none" />
                 <input
@@ -94,12 +110,12 @@ export const LoginPage = () => {
             {/* Password Field */}
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-semibold text-gray-700">Password</label>
+                <label className="text-xs font-semibold text-gray-700">{t('password')}</label>
                 <Link
                   to="/forgot-password"
                   className="text-xs text-[#2E7D32] hover:underline font-medium"
                 >
-                  Forgot Password?
+                  {t('forgotPassword')}
                 </Link>
               </div>
               <div className="relative">
@@ -128,7 +144,7 @@ export const LoginPage = () => {
               disabled={loading}
               className="w-full mt-2 py-3 px-4 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-semibold text-sm rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.99] flex items-center justify-center space-x-2 disabled:opacity-50"
             >
-              <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
+              <span>{loading ? t('authenticating') : t('signIn')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
@@ -138,7 +154,7 @@ export const LoginPage = () => {
             <div className="flex items-center space-x-1 mb-2.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
-                Demo Accounts (Viva Quick Fill)
+                {t('demoAccounts')}
               </span>
             </div>
             <div className="grid grid-cols-3 gap-2">
@@ -148,7 +164,7 @@ export const LoginPage = () => {
                 className="py-1.5 px-2 bg-purple-50 hover:bg-purple-100 text-purple-800 text-[11px] font-medium rounded-lg border border-purple-200 flex flex-col items-center justify-center transition"
               >
                 <Shield className="w-3.5 h-3.5 mb-0.5 text-purple-700" />
-                <span>Admin</span>
+                <span>{t('ADMIN')}</span>
               </button>
               <button
                 type="button"
@@ -156,7 +172,7 @@ export const LoginPage = () => {
                 className="py-1.5 px-2 bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-medium rounded-lg border border-amber-200 flex flex-col items-center justify-center transition"
               >
                 <Wrench className="w-3.5 h-3.5 mb-0.5 text-amber-700" />
-                <span>Worker</span>
+                <span>{t('WORKER')}</span>
               </button>
               <button
                 type="button"
@@ -164,7 +180,7 @@ export const LoginPage = () => {
                 className="py-1.5 px-2 bg-green-50 hover:bg-green-100 text-green-800 text-[11px] font-medium rounded-lg border border-green-200 flex flex-col items-center justify-center transition"
               >
                 <User className="w-3.5 h-3.5 mb-0.5 text-[#2E7D32]" />
-                <span>Citizen</span>
+                <span>{t('CITIZEN')}</span>
               </button>
             </div>
           </div>
@@ -172,9 +188,9 @@ export const LoginPage = () => {
 
         {/* Public Registration Link */}
         <p className="text-center text-xs text-gray-600">
-          Don't have a citizen account yet?{' '}
+          {t('dontHaveCitizenAccount')}{' '}
           <Link to="/register" className="text-[#2E7D32] font-semibold hover:underline">
-            Register as Citizen
+            {t('registerAsCitizen')}
           </Link>
         </p>
       </div>

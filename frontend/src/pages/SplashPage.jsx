@@ -2,10 +2,12 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, Sparkles, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export const SplashPage = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, loading } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!loading) {
@@ -28,7 +30,7 @@ export const SplashPage = () => {
       <div className="pt-8">
         <div className="inline-flex items-center space-x-1.5 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-medium border border-white/20">
           <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
-          <span>B.Tech CSE Community Service Project (CSP)</span>
+          <span>{t('cspProject')}</span>
         </div>
       </div>
 
@@ -44,22 +46,22 @@ export const SplashPage = () => {
         </div>
 
         <h1 className="text-3xl font-extrabold tracking-tight mb-2 drop-shadow-sm">
-          Smart Waste Collection
+          {t('smartWasteCollection')}
         </h1>
         <p className="text-green-100 font-medium text-sm tracking-wide mb-8">
-          Clean City, Green Future
+          {t('cleanCityGreenFuture')}
         </p>
 
         {/* Progress Bar Animation */}
         <div className="w-48 h-1.5 bg-green-900/50 rounded-full overflow-hidden shadow-inner">
           <div className="h-full bg-white rounded-full animate-pulse"></div>
         </div>
-        <span className="text-[11px] text-green-200 mt-2 font-mono">Initializing System...</span>
+        <span className="text-[11px] text-green-200 mt-2 font-mono">{t('initializingSystem')}</span>
       </div>
 
       <div className="pb-6 flex items-center space-x-2 text-xs text-green-200/80">
         <ShieldCheck className="w-4 h-4 text-green-300" />
-        <span>Municipal & Community Waste Management</span>
+        <span>{t('municipalCommunityWaste')}</span>
       </div>
     </div>
   );

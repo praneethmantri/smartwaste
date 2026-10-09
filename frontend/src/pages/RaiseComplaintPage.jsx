@@ -130,27 +130,27 @@ export const RaiseComplaintPage = () => {
   if (successComplaint) {
     return (
       <div className="min-h-screen bg-[#F5F8F5] pb-24">
-        <TopAppBar title="Complaint Submitted" showBack={true} />
+        <TopAppBar title={t('complaintSubmittedSuccess')} showBack={true} />
         <main className="max-w-md mx-auto px-4 py-8">
           <div className="bg-white rounded-3xl p-6 sm:p-8 text-center shadow-md border border-green-100 space-y-4">
             <div className="w-16 h-16 bg-green-100 text-[#2E7D32] rounded-full flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-10 h-10" />
             </div>
 
-            <h2 className="text-xl font-bold text-gray-900">Complaint Registered!</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t('complaintSubmittedSuccess')}</h2>
             <p className="text-xs text-gray-600">
-              Your grievance has been logged in the municipal database and routed to sanitation authorities.
+              {t('keepRefSafe')}
             </p>
 
             <div className="bg-green-50 border border-green-200 rounded-2xl p-4 my-4">
               <span className="text-[11px] text-green-700 uppercase font-semibold">
-                Complaint Reference ID
+                {t('referenceId')}
               </span>
               <p className="text-xl font-extrabold text-[#2E7D32] font-mono mt-0.5">
                 {successComplaint.complaintReference}
               </p>
               <p className="text-[11px] text-gray-500 mt-1">
-                Category: {successComplaint.category} ({successComplaint.priority} Priority)
+                {t('category')}: {t(successComplaint.category) || successComplaint.category} ({t(successComplaint.priority) || successComplaint.priority})
               </p>
             </div>
 
@@ -159,7 +159,7 @@ export const RaiseComplaintPage = () => {
                 onClick={() => navigate(`/complaints/${successComplaint.id}`)}
                 className="w-full py-3 px-4 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-semibold text-sm rounded-xl shadow-md transition"
               >
-                Track This Complaint
+                {t('trackNow')}
               </button>
               <button
                 onClick={() => {
@@ -179,7 +179,7 @@ export const RaiseComplaintPage = () => {
                 }}
                 className="w-full py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium text-xs rounded-xl transition"
               >
-                File Another Complaint
+                {t('raiseAnother')}
               </button>
             </div>
           </div>
@@ -196,9 +196,9 @@ export const RaiseComplaintPage = () => {
       <main className="max-w-2xl mx-auto px-4 py-4">
         <div className="bg-white rounded-3xl p-5 sm:p-7 shadow-sm border border-gray-100 space-y-5">
           <div className="border-b pb-3">
-            <h2 className="text-lg font-bold text-gray-900">Register Waste Grievance</h2>
+            <h2 className="text-lg font-bold text-gray-900">{t('raiseComplaint')}</h2>
             <p className="text-xs text-gray-500">
-              Provide exact location and description for quick dispatch of sanitation staff.
+              {t('dragPinNotice')}
             </p>
           </div>
 
@@ -213,34 +213,34 @@ export const RaiseComplaintPage = () => {
             {/* Waste Type & Category Selection */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-700">Waste Classification *</label>
+                <label className="text-xs font-semibold text-gray-700">{t('wasteType')} *</label>
                 <select
                   value={formData.wasteType}
                   onChange={(e) => setFormData({ ...formData, wasteType: e.target.value })}
                   className="w-full mt-1 px-3 py-2 text-xs sm:text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32]"
                 >
-                  <option value="Wet waste">Wet waste (Kitchen & Organic)</option>
-                  <option value="Dry waste">Dry waste (Paper, Boxes, Glass)</option>
-                  <option value="Plastic waste">Plastic waste (Bottles, Covers)</option>
-                  <option value="E-waste">E-waste (Electronics & Cables)</option>
-                  <option value="Mixed waste">Mixed unsegregated waste</option>
-                  <option value="Other">Other waste material</option>
+                  <option value="Wet waste">{t('Wet waste')}</option>
+                  <option value="Dry waste">{t('Dry waste')}</option>
+                  <option value="Plastic waste">{t('Plastic waste')}</option>
+                  <option value="E-waste">{t('E-waste')}</option>
+                  <option value="Mixed waste">{t('Mixed waste')}</option>
+                  <option value="Other">{t('Other')}</option>
                 </select>
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-700">Issue Category *</label>
+                <label className="text-xs font-semibold text-gray-700">{t('category')} *</label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   className="w-full mt-1 px-3 py-2 text-xs sm:text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32]"
                 >
-                  <option value="Garbage not collected">Garbage not collected</option>
-                  <option value="Overflowing dustbin">Overflowing community dustbin</option>
-                  <option value="Illegal dumping">Illegal dumping in public plot</option>
-                  <option value="Blocked drainage">Blocked drainage / Stagnant water</option>
-                  <option value="Public sanitation issue">Public sanitation issue</option>
-                  <option value="Other">Other civic sanitation problem</option>
+                  <option value="Garbage not collected">{t('Garbage not collected')}</option>
+                  <option value="Overflowing dustbin">{t('Overflowing dustbin')}</option>
+                  <option value="Illegal dumping">{t('Illegal dumping')}</option>
+                  <option value="Blocked drainage">{t('Blocked drainage')}</option>
+                  <option value="Public sanitation issue">{t('Public sanitation issue')}</option>
+                  <option value="Other">{t('Other')}</option>
                 </select>
               </div>
             </div>
@@ -248,14 +248,14 @@ export const RaiseComplaintPage = () => {
             {/* Priority Selector */}
             <div>
               <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                Urgency / Priority Level *
+                {t('priorityLevel')} *
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {[
-                  { id: 'LOW', label: 'Low', color: 'border-gray-300 text-gray-700 peer-checked:bg-gray-100 peer-checked:border-gray-500' },
-                  { id: 'MEDIUM', label: 'Medium', color: 'border-blue-300 text-blue-700 peer-checked:bg-blue-50 peer-checked:border-blue-600' },
-                  { id: 'HIGH', label: 'High', color: 'border-orange-300 text-orange-700 peer-checked:bg-orange-50 peer-checked:border-orange-600' },
-                  { id: 'EMERGENCY', label: 'Emergency', color: 'border-red-300 text-red-700 peer-checked:bg-red-50 peer-checked:border-red-600' },
+                  { id: 'LOW', label: t('LOW'), color: 'border-gray-300 text-gray-700 peer-checked:bg-gray-100 peer-checked:border-gray-500' },
+                  { id: 'MEDIUM', label: t('MEDIUM'), color: 'border-blue-300 text-blue-700 peer-checked:bg-blue-50 peer-checked:border-blue-600' },
+                  { id: 'HIGH', label: t('HIGH'), color: 'border-orange-300 text-orange-700 peer-checked:bg-orange-50 peer-checked:border-orange-600' },
+                  { id: 'EMERGENCY', label: t('EMERGENCY'), color: 'border-red-300 text-red-700 peer-checked:bg-red-50 peer-checked:border-red-600' },
                 ].map((item) => (
                   <label key={item.id} className="cursor-pointer">
                     <input
@@ -276,12 +276,12 @@ export const RaiseComplaintPage = () => {
 
             {/* Description */}
             <div>
-              <label className="text-xs font-semibold text-gray-700">Detailed Description *</label>
+              <label className="text-xs font-semibold text-gray-700">{t('description')} *</label>
               <textarea
                 rows={3}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Describe the waste situation, street location landmarks, or specific instructions for sanitation staff..."
+                placeholder={t('descriptionPlaceholder')}
                 required
                 className="w-full mt-1 p-3 text-xs sm:text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32]"
               />
@@ -290,7 +290,7 @@ export const RaiseComplaintPage = () => {
             {/* Photo Upload with Live Preview */}
             <div>
               <label className="text-xs font-semibold text-gray-700 block mb-1">
-                Waste Spot Photograph
+                {t('uploadPhoto')}
               </label>
               {imagePreview ? (
                 <div className="relative rounded-2xl overflow-hidden border border-gray-200 w-full sm:w-64 h-44 group">
@@ -310,8 +310,8 @@ export const RaiseComplaintPage = () => {
               ) : (
                 <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 hover:border-[#2E7D32] bg-gray-50 hover:bg-green-50/50 rounded-2xl p-5 cursor-pointer transition">
                   <Camera className="w-7 h-7 text-[#2E7D32] mb-1" />
-                  <span className="text-xs font-medium text-gray-700">Take Photo or Upload Image</span>
-                  <span className="text-[10px] text-gray-400 mt-0.5">JPEG, PNG, WebP up to 5MB</span>
+                  <span className="text-xs font-medium text-gray-700">{t('clickToUploadPhoto')}</span>
+                  <span className="text-[10px] text-gray-400 mt-0.5">JPEG, PNG, WebP</span>
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -334,14 +334,14 @@ export const RaiseComplaintPage = () => {
             {/* Manual Street Address & Service Zone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-700">Street Address / Landmark *</label>
+                <label className="text-xs font-semibold text-gray-700">{t('address')} *</label>
                 <div className="relative mt-1">
                   <MapPin className="w-4 h-4 text-gray-400 absolute left-3 top-3 pointer-events-none" />
                   <input
                     type="text"
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    placeholder="Near Community Hall, Street 3"
+                    placeholder="House / Street / Area"
                     required
                     className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32]"
                   />
@@ -349,7 +349,7 @@ export const RaiseComplaintPage = () => {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-700">Municipal Service Zone</label>
+                <label className="text-xs font-semibold text-gray-700">{t('selectZone')}</label>
                 <select
                   value={formData.serviceZoneId}
                   onChange={(e) => setFormData({ ...formData, serviceZoneId: e.target.value })}
@@ -371,7 +371,7 @@ export const RaiseComplaintPage = () => {
               className="w-full py-3.5 px-4 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-semibold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2 disabled:opacity-50 active:scale-[0.99]"
             >
               <Send className="w-4 h-4" />
-              <span>{submitting ? 'Submitting Grievance...' : 'Submit Complaint'}</span>
+              <span>{submitting ? t('submittingComplaint') : t('submitComplaint')}</span>
             </button>
           </form>
         </div>

@@ -106,7 +106,7 @@ export const CitizenDashboard = () => {
             <span className="text-2xl font-extrabold text-[#2E7D32] mt-0.5">
               {loading ? '...' : stats.total}
             </span>
-            <span className="text-[10px] text-gray-400 mt-0.5">Registered</span>
+            <span className="text-[10px] text-gray-400 mt-0.5">{t('SUBMITTED')}</span>
           </div>
 
           <div className="bg-white rounded-2xl p-3.5 shadow-sm border border-gray-100 flex flex-col items-center text-center">
@@ -114,7 +114,7 @@ export const CitizenDashboard = () => {
             <span className="text-2xl font-extrabold text-amber-600 mt-0.5">
               {loading ? '...' : stats.pending}
             </span>
-            <span className="text-[10px] text-amber-500 mt-0.5">In Queue</span>
+            <span className="text-[10px] text-amber-500 mt-0.5">{t('ASSIGNED')}</span>
           </div>
 
           <div className="bg-white rounded-2xl p-3.5 shadow-sm border border-gray-100 flex flex-col items-center text-center">
@@ -122,7 +122,7 @@ export const CitizenDashboard = () => {
             <span className="text-2xl font-extrabold text-green-600 mt-0.5">
               {loading ? '...' : stats.completed}
             </span>
-            <span className="text-[10px] text-green-600 mt-0.5">Cleaned</span>
+            <span className="text-[10px] text-green-600 mt-0.5">{t('COMPLETED')}</span>
           </div>
         </div>
 
@@ -135,10 +135,10 @@ export const CitizenDashboard = () => {
               </div>
               <div>
                 <span className="text-[11px] font-semibold text-[#2E7D32] uppercase tracking-wide">
-                  Next Scheduled Pickup
+                  {t('upcomingTimetables')}
                 </span>
                 <h4 className="text-sm font-bold text-gray-800">
-                  {nextSchedule.wasteType}
+                  {t(nextSchedule.wasteType) || nextSchedule.wasteType}
                 </h4>
                 <p className="text-[11px] text-gray-600">
                   {new Date(nextSchedule.collectionDate).toLocaleDateString()} • {nextSchedule.collectionTime}
@@ -174,7 +174,7 @@ export const CitizenDashboard = () => {
                   {t('raiseComplaint')}
                 </h4>
                 <p className="text-[11px] text-gray-500 mt-0.5">
-                  Report overflowing bin or missed pickup
+                  {t('raiseGrievance')}
                 </p>
               </div>
             </Link>
@@ -192,7 +192,7 @@ export const CitizenDashboard = () => {
                   {t('trackComplaints')}
                 </h4>
                 <p className="text-[11px] text-gray-500 mt-0.5">
-                  Follow complaint progress and photos
+                  {t('viewTracker')}
                 </p>
               </div>
             </Link>
@@ -210,7 +210,7 @@ export const CitizenDashboard = () => {
                   {t('collectionSchedule')}
                 </h4>
                 <p className="text-[11px] text-gray-500 mt-0.5">
-                  Timetable by municipal zone
+                  {t('viewSchedules')}
                 </p>
               </div>
             </Link>
@@ -228,7 +228,7 @@ export const CitizenDashboard = () => {
                   {t('wasteGuide')}
                 </h4>
                 <p className="text-[11px] text-gray-500 mt-0.5">
-                  Wet, Dry, Plastic, E-waste rules
+                  {t('segregationGuide')}
                 </p>
               </div>
             </Link>
@@ -246,7 +246,7 @@ export const CitizenDashboard = () => {
                   {t('feedback')}
                 </h4>
                 <p className="text-[11px] text-gray-500 mt-0.5">
-                  Rate sanitation team work
+                  {t('submitReview')}
                 </p>
               </div>
             </Link>
@@ -264,7 +264,7 @@ export const CitizenDashboard = () => {
                   {t('myProfile')}
                 </h4>
                 <p className="text-[11px] text-gray-500 mt-0.5">
-                  Address, password & settings
+                  {t('personalInfo')}
                 </p>
               </div>
             </Link>
@@ -279,23 +279,23 @@ export const CitizenDashboard = () => {
               to="/track"
               className="text-xs font-semibold text-[#2E7D32] hover:underline flex items-center space-x-1"
             >
-              <span>View All</span>
+              <span>{t('viewAll')}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           {loading ? (
             <div className="bg-white rounded-2xl p-6 text-center text-xs text-gray-500">
-              Loading recent complaints...
+              {t('loading')}
             </div>
           ) : complaints.length === 0 ? (
             <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100">
-              <p className="text-xs text-gray-500 mb-2">You haven't submitted any complaints yet.</p>
+              <p className="text-xs text-gray-500 mb-2">{t('noComplaintsYet')}</p>
               <Link
                 to="/raise-complaint"
                 className="inline-flex items-center space-x-1 text-xs font-semibold text-[#2E7D32] hover:underline"
               >
-                <span>Report an issue in your street</span>
+                <span>{t('raiseFirstComplaintPrompt')}</span>
                 <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
@@ -321,10 +321,10 @@ export const CitizenDashboard = () => {
                             : 'bg-blue-100 text-blue-800'
                         }`}
                       >
-                        {c.status.replace('_', ' ')}
+                        {t(c.status) || c.status.replace('_', ' ')}
                       </span>
                     </div>
-                    <p className="text-xs font-semibold text-gray-900">{c.category}</p>
+                    <p className="text-xs font-semibold text-gray-900">{t(c.category) || c.category}</p>
                     <p className="text-[11px] text-gray-500 line-clamp-1">{c.address}</p>
                   </div>
                   <ChevronRight className="w-4 h-4 text-gray-400" />

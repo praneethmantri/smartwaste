@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, User, Mail, Phone, Lock, Eye, EyeOff, MapPin, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Trash2, User, Mail, Phone, Lock, Eye, EyeOff, MapPin, ArrowRight, AlertCircle, CheckCircle2, Globe } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const { lang, setLanguage, t } = useLanguage();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -63,15 +65,31 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F8F5] py-8 px-4 flex flex-col justify-center">
+    <div className="min-h-screen bg-[#F5F8F5] py-8 px-4 flex flex-col justify-center relative">
+      {/* Language Switcher in Top Right */}
+      <div className="absolute top-4 right-4 flex items-center space-x-1">
+        <div className="relative">
+          <select
+            value={lang}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="bg-white text-gray-800 text-xs font-medium py-1.5 px-2.5 rounded-xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2E7D32] appearance-none cursor-pointer pr-6"
+          >
+            <option value="en">English</option>
+            <option value="te">తెలుగు (TE)</option>
+            <option value="hi">हिन्दी (HI)</option>
+          </select>
+          <Globe className="w-3.5 h-3.5 text-gray-400 absolute right-1.5 top-2.5 pointer-events-none" />
+        </div>
+      </div>
+
       <div className="max-w-md w-full mx-auto space-y-6">
         <div className="text-center space-y-1">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#2E7D32] text-white shadow-md mb-1">
             <Trash2 className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Citizen Registration</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('registerHeader')}</h2>
           <p className="text-xs text-gray-600">
-            Join your municipal clean community network
+            {t('joinCleanNetwork')}
           </p>
         </div>
 
@@ -85,7 +103,7 @@ export const RegisterPage = () => {
 
           <form onSubmit={handleRegister} className="space-y-3.5">
             <div>
-              <label className="text-xs font-semibold text-gray-700">Full Name *</label>
+              <label className="text-xs font-semibold text-gray-700">{t('fullName')} *</label>
               <div className="relative mt-1">
                 <User className="w-4 h-4 text-gray-400 absolute left-3 top-3 pointer-events-none" />
                 <input
@@ -102,7 +120,7 @@ export const RegisterPage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-700">Email Address *</label>
+                <label className="text-xs font-semibold text-gray-700">{t('email')} *</label>
                 <div className="relative mt-1">
                   <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-3 pointer-events-none" />
                   <input
@@ -118,7 +136,7 @@ export const RegisterPage = () => {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-700">Phone Number</label>
+                <label className="text-xs font-semibold text-gray-700">{t('phone')}</label>
                 <div className="relative mt-1">
                   <Phone className="w-4 h-4 text-gray-400 absolute left-3 top-3 pointer-events-none" />
                   <input
@@ -135,7 +153,7 @@ export const RegisterPage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-700">Password *</label>
+                <label className="text-xs font-semibold text-gray-700">{t('password')} *</label>
                 <div className="relative mt-1">
                   <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-3 pointer-events-none" />
                   <input
@@ -158,7 +176,7 @@ export const RegisterPage = () => {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-700">Confirm Password *</label>
+                <label className="text-xs font-semibold text-gray-700">{t('confirmPassword')} *</label>
                 <div className="relative mt-1">
                   <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-3 pointer-events-none" />
                   <input
@@ -175,7 +193,7 @@ export const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-gray-700">Residential Address</label>
+              <label className="text-xs font-semibold text-gray-700">{t('residentialAddress')}</label>
               <div className="relative mt-1">
                 <MapPin className="w-4 h-4 text-gray-400 absolute left-3 top-3 pointer-events-none" />
                 <input
@@ -191,7 +209,7 @@ export const RegisterPage = () => {
 
             <div className="grid grid-cols-3 gap-2">
               <div>
-                <label className="text-[11px] font-semibold text-gray-700">City</label>
+                <label className="text-[11px] font-semibold text-gray-700">{t('city')}</label>
                 <input
                   type="text"
                   name="city"
@@ -201,7 +219,7 @@ export const RegisterPage = () => {
                 />
               </div>
               <div>
-                <label className="text-[11px] font-semibold text-gray-700">State</label>
+                <label className="text-[11px] font-semibold text-gray-700">{t('state')}</label>
                 <input
                   type="text"
                   name="state"
@@ -211,7 +229,7 @@ export const RegisterPage = () => {
                 />
               </div>
               <div>
-                <label className="text-[11px] font-semibold text-gray-700">PIN Code</label>
+                <label className="text-[11px] font-semibold text-gray-700">{t('pincode')}</label>
                 <input
                   type="text"
                   name="pincode"
@@ -228,16 +246,16 @@ export const RegisterPage = () => {
               disabled={loading}
               className="w-full mt-3 py-3 px-4 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-semibold text-sm rounded-xl shadow-md transition active:scale-[0.99] flex items-center justify-center space-x-2 disabled:opacity-50"
             >
-              <span>{loading ? 'Creating Account...' : 'Register as Citizen'}</span>
+              <span>{loading ? t('creatingAccount') : t('registerAsCitizen')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
         </div>
 
         <p className="text-center text-xs text-gray-600">
-          Already have an account?{' '}
+          {t('alreadyHaveAccount')}{' '}
           <Link to="/login" className="text-[#2E7D32] font-semibold hover:underline">
-            Sign In
+            {t('signIn')}
           </Link>
         </p>
       </div>

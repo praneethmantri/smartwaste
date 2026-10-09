@@ -1,0 +1,24 @@
+databases:
+  - name: smartwaste-db
+    databaseName: smartwaste_db
+    user: smartwaste_user
+    plan: free
+
+services:
+  - type: web
+    name: smartwaste-app
+    env: node
+    plan: free
+    buildCommand: npm run deploy:build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smartwaste-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_URL
+        value: '*'

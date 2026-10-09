@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { TopAppBar } from '../components/common/TopAppBar';
 import { BottomNav } from '../components/common/BottomNav';
 import { ComplaintMap } from '../components/maps/ComplaintMap';
@@ -25,6 +26,7 @@ import api from '../api/client';
 export const WorkerDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
@@ -122,7 +124,7 @@ export const WorkerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#F5F8F5] pb-24">
-      <TopAppBar title="Sanitation Worker Portal" />
+      <TopAppBar title={t('workerDashboard')} />
 
       <main className="max-w-3xl mx-auto px-4 py-4 space-y-4">
         {/* Worker Profile Badge Card */}
@@ -135,12 +137,12 @@ export const WorkerDashboard = () => {
               <h2 className="text-xl font-bold">{user?.fullName}</h2>
               <p className="text-xs text-green-100 flex items-center space-x-1">
                 <MapPin className="w-3.5 h-3.5 text-green-200" />
-                <span>Zone: {data.worker?.serviceZone?.name || 'Assigned Zone'}</span>
+                <span>{t('serviceZone')}: {data.worker?.serviceZone?.name || t('unassignedWorker')}</span>
               </p>
             </div>
             <div className="text-right">
               <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded bg-green-900/60 border border-green-500/40">
-                Status: {data.worker?.availabilityStatus || 'ON_DUTY'}
+                {t('status')}: {data.worker?.availabilityStatus || 'ON_DUTY'}
               </span>
             </div>
           </div>
@@ -156,11 +158,11 @@ export const WorkerDashboard = () => {
                 : 'bg-white border-gray-100'
             }`}
           >
-            <span className="text-[11px] font-medium text-gray-500">Pending Tasks</span>
+            <span className="text-[11px] font-medium text-gray-500">{t('assignedTasks')}</span>
             <p className="text-2xl font-extrabold text-blue-700 mt-0.5">
               {data.counts.assigned}
             </p>
-            <span className="text-[10px] text-blue-600">Needs Pickup</span>
+            <span className="text-[10px] text-blue-600">{t('pendingComplaints')}</span>
           </div>
 
           <div
@@ -171,11 +173,11 @@ export const WorkerDashboard = () => {
                 : 'bg-white border-gray-100'
             }`}
           >
-            <span className="text-[11px] font-medium text-gray-500">In Progress</span>
+            <span className="text-[11px] font-medium text-gray-500">{t('inProgressTasks')}</span>
             <p className="text-2xl font-extrabold text-amber-700 mt-0.5">
               {data.counts.inProgress}
             </p>
-            <span className="text-[10px] text-amber-600">On-Site Work</span>
+            <span className="text-[10px] text-amber-600">{t('IN_PROGRESS')}</span>
           </div>
 
           <div
@@ -186,11 +188,11 @@ export const WorkerDashboard = () => {
                 : 'bg-white border-gray-100'
             }`}
           >
-            <span className="text-[11px] font-medium text-gray-500">Completed</span>
+            <span className="text-[11px] font-medium text-gray-500">{t('completedTasks')}</span>
             <p className="text-2xl font-extrabold text-green-700 mt-0.5">
               {data.counts.completed}
             </p>
-            <span className="text-[10px] text-green-600">Verified</span>
+            <span className="text-[10px] text-green-600">{t('COMPLETED')}</span>
           </div>
         </div>
 
@@ -199,16 +201,16 @@ export const WorkerDashboard = () => {
           <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-2">
             <h3 className="text-xs font-bold text-gray-800 flex items-center space-x-1.5">
               <Calendar className="w-4 h-4 text-[#2E7D32]" />
-              <span>Today's Vehicle Route & Collection Schedule</span>
+              <span>{t('todayRoute')}</span>
             </h3>
             {data.todaySchedules.map((sc) => (
               <div key={sc.id} className="p-2.5 bg-gray-50 rounded-xl text-xs flex justify-between items-center">
                 <div>
-                  <span className="font-bold text-gray-800">{sc.wasteType}</span>
+                  <span className="font-bold text-gray-800">{t(sc.wasteType) || sc.wasteType}</span>
                   <p className="text-[11px] text-gray-500">{sc.collectionTime} • {sc.serviceZone?.name}</p>
                 </div>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">
-                  {sc.vehicleNumber || 'Route Active'}
+                  {sc.vehicleNumber || 'AP-31-TC'}
                 </span>
               </div>
             ))}
@@ -221,9 +223,9 @@ export const WorkerDashboard = () => {
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-gray-800 flex items-center space-x-1.5">
                 <MapPin className="w-4 h-4 text-[#2E7D32]" />
-                <span>Assigned Task Locations Map</span>
+                <span>{t('captureLocation')}</span>
               </h3>
-              <span className="text-[11px] text-gray-500">{data.tasks.length} Points Mapped</span>
+              <span className="text-[11px] text-gray-500">{data.tasks.length} {t('complaints')}</span>
             </div>
             <ComplaintMap complaints={data.tasks} height="220px" zoom={13} />
           </div>
@@ -233,18 +235,18 @@ export const WorkerDashboard = () => {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-gray-900">
-              {statusTab === 'ASSIGNED' ? 'Assigned Complaints' : statusTab === 'IN_PROGRESS' ? 'Tasks In Progress' : 'Completed Grievances'} ({currentTasks.length})
+              {t(statusTab === 'ASSIGNED' ? 'assignedTasks' : statusTab === 'IN_PROGRESS' ? 'inProgressTasks' : 'completedTasks')} ({currentTasks.length})
             </h3>
           </div>
 
           {loading ? (
             <div className="bg-white rounded-2xl p-8 text-center text-xs text-gray-500">
-              Loading worker task list...
+              {t('loading')}
             </div>
           ) : currentTasks.length === 0 ? (
             <div className="bg-white rounded-3xl p-8 text-center shadow-sm border border-gray-100 space-y-2">
               <CheckSquare className="w-8 h-8 text-gray-300 mx-auto" />
-              <p className="text-xs text-gray-500">No tasks currently under {statusTab.replace('_', ' ')}.</p>
+              <p className="text-xs text-gray-500">{t('noTasksInTab')}</p>
             </div>
           ) : (
             currentTasks.map((task) => (
@@ -258,7 +260,7 @@ export const WorkerDashboard = () => {
                       {task.complaintReference}
                     </span>
                     <span className="text-[10px] text-gray-400">•</span>
-                    <span className="text-xs font-semibold text-gray-800">{task.wasteType}</span>
+                    <span className="text-xs font-semibold text-gray-800">{t(task.wasteType) || task.wasteType}</span>
                   </div>
                   <span
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -269,12 +271,12 @@ export const WorkerDashboard = () => {
                         : 'bg-blue-100 text-blue-800'
                     }`}
                   >
-                    {task.priority} Priority
+                    {t(task.priority) || task.priority}
                   </span>
                 </div>
 
                 <div className="space-y-1">
-                  <h4 className="text-xs font-bold text-gray-900">{task.category}</h4>
+                  <h4 className="text-xs font-bold text-gray-900">{t(task.category) || task.category}</h4>
                   <p className="text-xs text-gray-600 line-clamp-2">{task.description}</p>
                 </div>
 
@@ -298,7 +300,7 @@ export const WorkerDashboard = () => {
                     className="inline-flex items-center space-x-1 text-xs text-[#1976D2] font-semibold hover:underline shrink-0"
                   >
                     <Navigation className="w-3 h-3" />
-                    <span>Open GPS</span>
+                    <span>{t('getDirections')}</span>
                   </a>
                 </div>
 
@@ -308,7 +310,7 @@ export const WorkerDashboard = () => {
                     onClick={() => navigate(`/complaints/${task.id}`)}
                     className="text-xs text-gray-600 hover:text-black font-semibold"
                   >
-                    View History
+                    {t('viewDetails')}
                   </button>
 
                   <div className="flex gap-2">
@@ -319,7 +321,7 @@ export const WorkerDashboard = () => {
                         className="inline-flex items-center space-x-1 px-3 py-1.5 bg-[#1976D2] hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow transition active:scale-95"
                       >
                         <Play className="w-3.5 h-3.5" />
-                        <span>Start Work</span>
+                        <span>{actionLoading ? t('startingTask') : t('startTask')}</span>
                       </button>
                     )}
 
@@ -332,14 +334,14 @@ export const WorkerDashboard = () => {
                         className="inline-flex items-center space-x-1 px-3 py-1.5 bg-[#2E7D32] hover:bg-[#1B5E20] text-white text-xs font-semibold rounded-xl shadow transition active:scale-95"
                       >
                         <Camera className="w-3.5 h-3.5" />
-                        <span>Upload Proof & Complete</span>
+                        <span>{t('completeTask')}</span>
                       </button>
                     )}
 
                     {task.status === 'COMPLETED' && (
                       <span className="inline-flex items-center space-x-1 text-xs font-bold text-green-700">
                         <CheckCircle2 className="w-4 h-4" />
-                        <span>Work Completed</span>
+                        <span>{t('COMPLETED')}</span>
                       </span>
                     )}
                   </div>
@@ -354,7 +356,7 @@ export const WorkerDashboard = () => {
           <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-xl">
               <div className="flex items-center justify-between border-b pb-2">
-                <h3 className="text-base font-bold text-gray-900">Upload Cleaned Site Proof</h3>
+                <h3 className="text-base font-bold text-gray-900">{t('uploadProofTitle')}</h3>
                 <button
                   type="button"
                   onClick={() => setSelectedTaskForProof(null)}
@@ -365,7 +367,7 @@ export const WorkerDashboard = () => {
               </div>
 
               <p className="text-xs text-gray-600">
-                Task: <strong>{selectedTaskForProof.complaintReference}</strong> ({selectedTaskForProof.category})
+                {t('referenceId')}: <strong>{selectedTaskForProof.complaintReference}</strong> ({t(selectedTaskForProof.category) || selectedTaskForProof.category})
               </p>
 
               {proofError && (
@@ -378,7 +380,7 @@ export const WorkerDashboard = () => {
                 {/* Photo Upload with Preview */}
                 <div>
                   <label className="text-xs font-semibold text-gray-700 block mb-1">
-                    Photo Evidence of Cleaned Area *
+                    {t('clearanceProof')} *
                   </label>
                   {proofPreview ? (
                     <div className="relative rounded-2xl overflow-hidden border border-gray-200 h-40">
@@ -397,8 +399,8 @@ export const WorkerDashboard = () => {
                   ) : (
                     <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 hover:border-green-600 bg-gray-50 rounded-2xl p-4 cursor-pointer transition">
                       <Camera className="w-6 h-6 text-[#2E7D32] mb-1" />
-                      <span className="text-xs font-medium text-gray-700">Capture / Upload Photo</span>
-                      <span className="text-[10px] text-gray-400">JPEG, PNG up to 5MB</span>
+                      <span className="text-xs font-medium text-gray-700">{t('clickToUploadPhoto')}</span>
+                      <span className="text-[10px] text-gray-400">JPEG, PNG</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -411,12 +413,12 @@ export const WorkerDashboard = () => {
 
                 {/* Worker notes */}
                 <div>
-                  <label className="text-xs font-semibold text-gray-700">Notes / Clearance Summary</label>
+                  <label className="text-xs font-semibold text-gray-700">{t('clearanceNotes')}</label>
                   <textarea
                     rows={2}
                     value={proofNotes}
                     onChange={(e) => setProofNotes(e.target.value)}
-                    placeholder="Cleared 50kg wet waste and sanitized corner..."
+                    placeholder={t('proofNotesPlaceholder')}
                     className="w-full mt-1 p-2 text-xs bg-gray-50 border border-gray-200 rounded-xl"
                   />
                 </div>
@@ -426,7 +428,7 @@ export const WorkerDashboard = () => {
                   disabled={actionLoading}
                   className="w-full py-2.5 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-semibold text-xs rounded-xl shadow transition disabled:opacity-50"
                 >
-                  {actionLoading ? 'Uploading & Closing Task...' : 'Submit Proof & Mark Resolved'}
+                  {actionLoading ? t('submittingProofBtn') : t('submitProofBtn')}
                 </button>
               </form>
             </div>

@@ -3,37 +3,39 @@ import { NavLink } from 'react-router-dom';
 import { Home, PlusCircle, Search, Bell, User, CheckSquare, Calendar, ShieldCheck, FileText, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const BottomNav = () => {
   const { user, isAuthenticated } = useAuth();
   const { unreadCount } = useNotifications();
+  const { t } = useLanguage();
 
   if (!isAuthenticated) return null;
 
   // Citizen Navigation items
   const citizenItems = [
-    { label: 'Home', to: '/dashboard', icon: Home },
-    { label: 'Raise', to: '/raise-complaint', icon: PlusCircle, highlight: true },
-    { label: 'Track', to: '/track', icon: Search },
-    { label: 'Alerts', to: '/notifications', icon: Bell, badge: unreadCount },
-    { label: 'Profile', to: '/profile', icon: User },
+    { label: t('home'), to: '/dashboard', icon: Home },
+    { label: t('raise'), to: '/raise-complaint', icon: PlusCircle, highlight: true },
+    { label: t('track'), to: '/track', icon: Search },
+    { label: t('alerts'), to: '/notifications', icon: Bell, badge: unreadCount },
+    { label: t('profile'), to: '/profile', icon: User },
   ];
 
   // Worker Navigation items
   const workerItems = [
-    { label: 'Tasks', to: '/worker', icon: CheckSquare },
-    { label: 'Schedule', to: '/schedules', icon: Calendar },
-    { label: 'Alerts', to: '/notifications', icon: Bell, badge: unreadCount },
-    { label: 'Profile', to: '/profile', icon: User },
+    { label: t('tasks'), to: '/worker', icon: CheckSquare },
+    { label: t('schedule'), to: '/schedules', icon: Calendar },
+    { label: t('alerts'), to: '/notifications', icon: Bell, badge: unreadCount },
+    { label: t('profile'), to: '/profile', icon: User },
   ];
 
   // Admin Navigation items
   const adminItems = [
-    { label: 'Control', to: '/admin', icon: ShieldCheck },
-    { label: 'Complaints', to: '/admin/complaints', icon: CheckSquare },
-    { label: 'Schedules', to: '/admin/schedules', icon: Calendar },
-    { label: 'Users', to: '/admin/users', icon: Users },
-    { label: 'Reports', to: '/admin/reports', icon: FileText },
+    { label: t('control'), to: '/admin', icon: ShieldCheck },
+    { label: t('complaints'), to: '/admin/complaints', icon: CheckSquare },
+    { label: t('schedules'), to: '/admin/schedules', icon: Calendar },
+    { label: t('users'), to: '/admin/users', icon: Users },
+    { label: t('reports'), to: '/admin/reports', icon: FileText },
   ];
 
   let items = citizenItems;

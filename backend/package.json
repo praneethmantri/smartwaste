@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
+    "build": "prisma generate",
     "dev": "node --watch src/server.js",
+    "db:start": "node run-postgres.js",
+    "db:stop": "node stop-postgres.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
@@ -25,12 +28,14 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "pdfkit": "^0.15.2",
+    "prisma": "^5.22.0",
+    "smart-waste-management-system": "file:..",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "prisma": "^5.22.0",
+    "embedded-postgres": "^18.4.0-beta.17",
     "supertest": "^7.0.0"
   }
 }

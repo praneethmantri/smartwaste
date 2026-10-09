@@ -12,9 +12,11 @@ import {
 } from 'lucide-react';
 import { TopAppBar } from '../components/common/TopAppBar';
 import { BottomNav } from '../components/common/BottomNav';
+import { useLanguage } from '../context/LanguageContext';
 import api from '../api/client';
 
 export const AdminUsersPage = () => {
+  const { t } = useLanguage();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -42,7 +44,7 @@ export const AdminUsersPage = () => {
 
   return (
     <div className="min-h-screen bg-[#F5F8F5] pb-24">
-      <TopAppBar title="User & Staff Roster" showBack={true} />
+      <TopAppBar title={t('userStaffRoster')} showBack={true} />
 
       <main className="max-w-4xl mx-auto px-4 py-4 space-y-4">
         {/* Search & Filter */}
@@ -54,7 +56,7 @@ export const AdminUsersPage = () => {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by name, email, or contact number..."
+                placeholder={t('searchUsersPlaceholder')}
                 className="w-full pl-9 pr-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl"
               />
             </div>
@@ -62,7 +64,7 @@ export const AdminUsersPage = () => {
               onClick={fetchUsers}
               className="px-4 py-2 bg-[#2E7D32] text-white text-xs font-semibold rounded-xl"
             >
-              Search
+              {t('search')}
             </button>
           </div>
 
@@ -77,7 +79,7 @@ export const AdminUsersPage = () => {
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                {r || 'All Roles'}
+                {r ? (t(r) || r) : t('allRoles')}
               </button>
             ))}
           </div>
@@ -86,11 +88,11 @@ export const AdminUsersPage = () => {
         {/* User Cards List */}
         {loading ? (
           <div className="bg-white rounded-2xl p-8 text-center text-xs text-gray-500">
-            Loading user records from database...
+            {t('loadingUsers')}
           </div>
         ) : users.length === 0 ? (
           <div className="bg-white rounded-2xl p-8 text-center text-xs text-gray-500">
-            No accounts found.
+            {t('noAccountsFound')}
           </div>
         ) : (
           <div className="space-y-3">
@@ -111,7 +113,7 @@ export const AdminUsersPage = () => {
                           : 'bg-green-100 text-green-800'
                       }`}
                     >
-                      {u.role}
+                      {t(u.role) || u.role}
                     </span>
                   </div>
 
@@ -122,7 +124,7 @@ export const AdminUsersPage = () => {
 
                   <p className="text-xs text-gray-500 flex items-center space-x-1">
                     <Phone className="w-3 h-3 text-gray-400" />
-                    <span>{u.phone || 'No phone provided'}</span>
+                    <span>{u.phone || t('noPhoneProvided')}</span>
                   </p>
 
                   <p className="text-[11px] text-gray-400 flex items-center space-x-1">
@@ -139,7 +141,7 @@ export const AdminUsersPage = () => {
                   )}
                   {u._count?.complaints !== undefined && (
                     <div className="text-[10px] text-gray-500">
-                      Complaints: <strong>{u._count.complaints}</strong>
+                      {t('complaints')}: <strong>{u._count.complaints}</strong>
                     </div>
                   )}
                 </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { MapPin, Navigation, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 // Fix Leaflet's default marker icons in Vite/Webpack bundlers
 delete L.Icon.Default.prototype._getIconUrl;
@@ -36,6 +37,7 @@ const LocationMarker = ({ position, setPosition }) => {
 };
 
 export const LocationPicker = ({ initialLat, initialLng, onLocationSelect }) => {
+  const { t } = useLanguage();
   // Default coordinates (e.g. Visakhapatnam central coordinates)
   const [position, setPosition] = useState([
     initialLat || 17.7215,
@@ -70,16 +72,12 @@ export const LocationPicker = ({ initialLat, initialLng, onLocationSelect }) => 
         setPosition(coords);
         setGpsLoading(false);
         setGpsStatus('success');
-        setStatusMessage('GPS coordinates successfully captured from your device.');
+        setStatusMessage(t('gpsCapturedNotice'));
       },
       (err) => {
         setGpsLoading(false);
         setGpsStatus('denied');
-        if (err.code === err.PERMISSION_DENIED) {
-          setStatusMessage('Location permission was denied. You can still tap or drag the pin on the map to set your location.');
-        } else {
-          setStatusMessage('Unable to retrieve GPS signal. Please position the marker manually on the map.');
-        }
+        setStatusMessage(t('dragPinNotice'));
       },
       {
         enableHighAccuracy: true,
@@ -94,7 +92,7 @@ export const LocationPicker = ({ initialLat, initialLng, onLocationSelect }) => 
       <div className="flex items-center justify-between">
         <label className="text-xs font-semibold text-gray-700 flex items-center space-x-1.5">
           <MapPin className="w-4 h-4 text-[#2E7D32]" />
-          <span>Waste Spot Map Location *</span>
+          <span>{t('captureLocation')} *</span>
         </label>
         <button
           type="button"
@@ -103,7 +101,7 @@ export const LocationPicker = ({ initialLat, initialLng, onLocationSelect }) => 
           className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-medium bg-green-50 text-[#2E7D32] border border-green-300 rounded-lg hover:bg-green-100 transition active:scale-95 disabled:opacity-50"
         >
           <Navigation className={`w-3.5 h-3.5 ${gpsLoading ? 'animate-spin' : ''}`} />
-          <span>{gpsLoading ? 'Locating...' : 'Use My GPS'}</span>
+          <span>{gpsLoading ? t('loading') : t('captureLocation')}</span>
         </button>
       </div>
 
@@ -144,7 +142,7 @@ export const LocationPicker = ({ initialLat, initialLng, onLocationSelect }) => 
         </div>
       </div>
       <p className="text-[11px] text-gray-500">
-        Tap anywhere on the map or drag the pin to pinpoint the exact waste location.
+        {t('dragPinNotice')}
       </p>
     </div>
   );

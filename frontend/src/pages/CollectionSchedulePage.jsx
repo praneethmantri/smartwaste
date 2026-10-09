@@ -93,10 +93,10 @@ export const CollectionSchedulePage = () => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-bold text-gray-900">
-                Municipal Waste Collection Calendar
+                {t('upcomingTimetables')}
               </h2>
               <p className="text-xs text-gray-500">
-                Scheduled door-to-door sanitation rounds by ward
+                {t('collectionSchedule')}
               </p>
             </div>
             {user?.role === 'ADMIN' && (
@@ -111,7 +111,7 @@ export const CollectionSchedulePage = () => {
                 className="inline-flex items-center space-x-1 px-3 py-1.5 bg-[#2E7D32] text-white text-xs font-semibold rounded-xl shadow hover:bg-[#1B5E20] transition"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Add Schedule</span>
+                <span>{t('addNewSchedule')}</span>
               </button>
             )}
           </div>
@@ -119,14 +119,14 @@ export const CollectionSchedulePage = () => {
           {/* Zone Selector */}
           <div className="pt-2">
             <label className="text-xs font-semibold text-gray-700 block mb-1">
-              Filter by Service Ward / Zone:
+              {t('filterByZone')}:
             </label>
             <select
               value={selectedZone}
               onChange={(e) => setSelectedZone(e.target.value)}
               className="w-full px-3 py-2 text-xs sm:text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32]"
             >
-              <option value="">All Municipal Wards & Zones</option>
+              <option value="">{t('all')}</option>
               {zones.map((z) => (
                 <option key={z.id} value={z.id}>
                   {z.name}
@@ -136,22 +136,16 @@ export const CollectionSchedulePage = () => {
           </div>
         </div>
 
-        {/* Demo Data Disclaimer */}
-        <div className="px-3 py-1.5 bg-green-50 border border-green-200 rounded-xl flex items-center space-x-2 text-[11px] text-green-800">
-          <Sparkles className="w-3.5 h-3.5 text-green-600 shrink-0" />
-          <span>Demo timetable schedules loaded from database. Synchronized with live municipal vehicle routes.</span>
-        </div>
-
         {/* Schedule List */}
         {loading ? (
           <div className="bg-white rounded-2xl p-8 text-center text-xs text-gray-500 shadow-sm">
-            Loading collection schedules...
+            {t('loading')}
           </div>
         ) : schedules.length === 0 ? (
           <div className="bg-white rounded-3xl p-8 text-center shadow-sm border border-gray-100">
             <Calendar className="w-8 h-8 text-gray-400 mx-auto mb-2" />
             <p className="text-xs text-gray-500">
-              No collection rounds scheduled for this selected zone today.
+              {t('noSchedulesFound')}
             </p>
           </div>
         ) : (
@@ -164,7 +158,7 @@ export const CollectionSchedulePage = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <span className="text-xs font-bold text-[#2E7D32]">
-                      {s.wasteType}
+                      {t(s.wasteType) || s.wasteType}
                     </span>
                   </div>
                   <span
@@ -176,7 +170,7 @@ export const CollectionSchedulePage = () => {
                         : 'bg-blue-100 text-blue-800'
                     }`}
                   >
-                    {s.status}
+                    {t(s.status) || s.status}
                   </span>
                 </div>
 

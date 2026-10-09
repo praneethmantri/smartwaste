@@ -163,13 +163,13 @@ export const ProfilePage = () => {
             <div className="flex items-center justify-center sm:justify-start space-x-2">
               <h2 className="text-lg font-bold text-gray-900">{user?.fullName}</h2>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-800">
-                {user?.role}
+                {t(user?.role) || user?.role}
               </span>
             </div>
             <p className="text-xs text-gray-500">{user?.email}</p>
             {user?.role === 'WORKER' && user.worker && (
               <p className="text-[11px] font-mono text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md inline-block">
-                Employee: {user.worker.employeeCode}
+                {t('employeeCode')}: {user.worker.employeeCode}
               </p>
             )}
           </div>
@@ -179,7 +179,7 @@ export const ProfilePage = () => {
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
           <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-1.5 border-b pb-2">
             <User className="w-4 h-4 text-[#2E7D32]" />
-            <span>Personal Information</span>
+            <span>{t('personalInfo')}</span>
           </h3>
 
           {profileSuccess && (
@@ -198,7 +198,7 @@ export const ProfilePage = () => {
 
           <form onSubmit={handleProfileSave} className="space-y-3.5">
             <div>
-              <label className="text-xs font-semibold text-gray-700">Full Name</label>
+              <label className="text-xs font-semibold text-gray-700">{t('fullName')}</label>
               <input
                 type="text"
                 value={formData.fullName}
@@ -210,7 +210,7 @@ export const ProfilePage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-700">Email Address (Read-only)</label>
+                <label className="text-xs font-semibold text-gray-700">{t('emailReadOnly')}</label>
                 <input
                   type="email"
                   disabled
@@ -220,7 +220,7 @@ export const ProfilePage = () => {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-700">Phone Number</label>
+                <label className="text-xs font-semibold text-gray-700">{t('phone')}</label>
                 <input
                   type="tel"
                   value={formData.phone}
@@ -232,7 +232,7 @@ export const ProfilePage = () => {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-gray-700">Residential Address</label>
+              <label className="text-xs font-semibold text-gray-700">{t('residentialAddress')}</label>
               <input
                 type="text"
                 value={formData.address}
@@ -244,7 +244,7 @@ export const ProfilePage = () => {
 
             <div className="grid grid-cols-3 gap-2">
               <div>
-                <label className="text-[11px] font-semibold text-gray-700">City</label>
+                <label className="text-[11px] font-semibold text-gray-700">{t('city')}</label>
                 <input
                   type="text"
                   value={formData.city}
@@ -253,7 +253,7 @@ export const ProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="text-[11px] font-semibold text-gray-700">State</label>
+                <label className="text-[11px] font-semibold text-gray-700">{t('state')}</label>
                 <input
                   type="text"
                   value={formData.state}
@@ -262,7 +262,7 @@ export const ProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="text-[11px] font-semibold text-gray-700">PIN Code</label>
+                <label className="text-[11px] font-semibold text-gray-700">{t('pincode')}</label>
                 <input
                   type="text"
                   value={formData.pincode}
@@ -278,7 +278,7 @@ export const ProfilePage = () => {
               className="py-2.5 px-4 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-semibold text-xs rounded-xl shadow transition flex items-center space-x-1.5 disabled:opacity-50"
             >
               <Save className="w-3.5 h-3.5" />
-              <span>{savingProfile ? 'Saving...' : 'Save Profile Changes'}</span>
+              <span>{savingProfile ? t('savingProfile') : t('saveProfileChanges')}</span>
             </button>
           </form>
         </div>
@@ -287,7 +287,7 @@ export const ProfilePage = () => {
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
           <h3 className="text-sm font-bold text-gray-900 flex items-center space-x-1.5 border-b pb-2">
             <Lock className="w-4 h-4 text-[#2E7D32]" />
-            <span>Update Password</span>
+            <span>{t('updatePassword')}</span>
           </h3>
 
           {passSuccess && (
@@ -306,7 +306,7 @@ export const ProfilePage = () => {
 
           <form onSubmit={handlePasswordChange} className="space-y-3">
             <div>
-              <label className="text-xs font-semibold text-gray-700">Current Password</label>
+              <label className="text-xs font-semibold text-gray-700">{t('currentPassword')}</label>
               <input
                 type="password"
                 value={passwordData.currentPassword}
@@ -320,7 +320,7 @@ export const ProfilePage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-700">New Password</label>
+                <label className="text-xs font-semibold text-gray-700">{t('newPassword')}</label>
                 <input
                   type="password"
                   value={passwordData.newPassword}
@@ -334,7 +334,7 @@ export const ProfilePage = () => {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-700">Confirm New Password</label>
+                <label className="text-xs font-semibold text-gray-700">{t('confirmNewPassword')}</label>
                 <input
                   type="password"
                   value={passwordData.confirmNewPassword}
@@ -353,7 +353,7 @@ export const ProfilePage = () => {
               className="py-2.5 px-4 bg-gray-800 hover:bg-black text-white font-semibold text-xs rounded-xl shadow transition flex items-center space-x-1.5 disabled:opacity-50"
             >
               <KeyRound className="w-3.5 h-3.5" />
-              <span>{changingPass ? 'Updating...' : 'Change Password'}</span>
+              <span>{changingPass ? t('updatingPassword') : t('changePassword')}</span>
             </button>
           </form>
         </div>
@@ -366,7 +366,7 @@ export const ProfilePage = () => {
             className="w-full py-3 px-4 bg-red-50 hover:bg-red-100 text-red-700 font-semibold text-xs rounded-2xl border border-red-200 flex items-center justify-center space-x-2 transition"
           >
             <LogOut className="w-4 h-4 text-red-600" />
-            <span>Sign Out of Account</span>
+            <span>{t('logout')}</span>
           </button>
         </div>
       </main>

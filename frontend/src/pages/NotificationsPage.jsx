@@ -53,7 +53,7 @@ export const NotificationsPage = () => {
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              All ({notifications.length})
+              {t('all')} ({notifications.length})
             </button>
             <button
               onClick={() => setFilter('UNREAD')}
@@ -63,7 +63,7 @@ export const NotificationsPage = () => {
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              Unread ({unreadCount})
+              {t('unread')} ({unreadCount})
             </button>
           </div>
 
@@ -73,7 +73,7 @@ export const NotificationsPage = () => {
               className="inline-flex items-center space-x-1 text-xs text-[#2E7D32] hover:underline font-semibold"
             >
               <CheckCheck className="w-3.5 h-3.5" />
-              <span>Mark all read</span>
+              <span>{t('markAllRead')}</span>
             </button>
           )}
         </div>
@@ -82,9 +82,9 @@ export const NotificationsPage = () => {
         {filtered.length === 0 ? (
           <div className="bg-white rounded-3xl p-10 text-center shadow-sm border border-gray-100 space-y-2">
             <Bell className="w-8 h-8 text-gray-300 mx-auto" />
-            <h4 className="text-sm font-bold text-gray-700">No Notifications</h4>
+            <h4 className="text-sm font-bold text-gray-700">{t('noNotificationsTitle')}</h4>
             <p className="text-xs text-gray-400">
-              {filter === 'UNREAD' ? 'You have read all your alerts!' : 'No messages in your activity stream yet.'}
+              {filter === 'UNREAD' ? t('readAllAlerts') : t('noActivityStream')}
             </p>
           </div>
         ) : (
