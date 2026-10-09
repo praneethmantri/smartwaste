@@ -9,8 +9,8 @@ services:
     name: smartwaste-app
     env: node
     plan: free
-    buildCommand: npm run deploy:build
-    startCommand: npm start
+    buildCommand: npm run build
+    startCommand: npm run db:push && npm start
     envVars:
       - key: DATABASE_URL
         fromDatabase:
