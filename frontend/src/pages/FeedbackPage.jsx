@@ -39,10 +39,10 @@ export const FeedbackPage = () => {
         setLoading(true);
         const res = await api.get('/complaints?status=COMPLETED');
         const list = res.data.complaints || [];
-        // Only complaints without feedback
         setCompletedComplaints(list);
         if (!selectedComplaintId && list.length > 0) {
-          setSelectedComplaintId(list[0].id);
+          const unreviewed = list.find((c) => !c.feedback);
+          setSelectedComplaintId(unreviewed ? unreviewed.id : list[0].id);
         }
       } catch (err) {
         console.error('Could not load completed complaints:', err.message);
@@ -51,7 +51,10 @@ export const FeedbackPage = () => {
       }
     };
     fetchEligibleComplaints();
-  }, [selectedComplaintId]);
+  }, []);
+
+  const currentComplaint = completedComplaints.find((c) => c.id === selectedComplaintId);
+  const alreadyReviewed = !!currentComplaint?.feedback;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -143,12 +146,22 @@ export const FeedbackPage = () => {
                   >
                     {completedComplaints.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.complaintReference} - {t(c.category) || c.category} ({t(c.wasteType) || c.wasteType})
+                        {c.complaintReference} - {t(c.category) || c.category} ({t(c.wasteType) || c.wasteType}){c.feedback ? ' ✓' : ''}
                       </option>
                     ))}
                   </select>
                 )}
               </div>
+
+              {alreadyReviewed && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-start space-x-2 text-xs text-blue-800">
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                  <span>
+                    You have already submitted feedback for this complaint (Rating: {currentComplaint.feedback.rating}/5 ⭐).
+                    {currentComplaint.feedback.comments ? ` Review: "${currentComplaint.feedback.comments}"` : ''}
+                  </span>
+                </div>
+              )}
 
               {/* Star Rating Selection */}
               <div>
@@ -226,10 +239,14 @@ export const FeedbackPage = () => {
 
               <button
                 type="submit"
-                disabled={submitting || completedComplaints.length === 0}
+                disabled={submitting || completedComplaints.length === 0 || alreadyReviewed}
                 className="w-full py-3 px-4 bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-semibold text-sm rounded-xl shadow transition disabled:opacity-50"
               >
-                {submitting ? t('submittingReviewBtn') : t('submitReviewBtn')}
+                {submitting
+                  ? t('submittingReviewBtn')
+                  : alreadyReviewed
+                  ? t('feedbackSubmittedNotice') || 'Feedback Already Submitted'
+                  : t('submitReviewBtn')}
               </button>
             </form>
           )}

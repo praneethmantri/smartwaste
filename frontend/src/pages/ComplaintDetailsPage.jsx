@@ -20,6 +20,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { TopAppBar } from '../components/common/TopAppBar';
 import { BottomNav } from '../components/common/BottomNav';
 import { ComplaintMap } from '../components/maps/ComplaintMap';
+import { resolveImageUrl } from '../utils/image';
 import api from '../api/client';
 
 export const ComplaintDetailsPage = () => {
@@ -237,7 +238,7 @@ export const ComplaintDetailsPage = () => {
               </span>
               <div className="h-48 sm:h-64 rounded-2xl overflow-hidden border border-gray-200 bg-gray-100">
                 <img
-                  src={complaint.imageUrl}
+                  src={resolveImageUrl(complaint.imageUrl)}
                   alt="Waste Spot"
                   className="w-full h-full object-cover"
                 />
@@ -307,7 +308,7 @@ export const ComplaintDetailsPage = () => {
             {complaint.completionProofs.map((proof) => (
               <div key={proof.id} className="space-y-2 border border-green-200 rounded-2xl p-3 bg-green-50/50">
                 <div className="h-48 rounded-xl overflow-hidden bg-gray-100">
-                  <img src={proof.imageUrl} alt="Completion Proof" className="w-full h-full object-cover" />
+                  <img src={resolveImageUrl(proof.imageUrl)} alt="Completion Proof" className="w-full h-full object-cover" />
                 </div>
                 <p className="text-xs text-gray-700 italic">
                   {t('clearanceNotes')}: "{proof.notes || ''}"

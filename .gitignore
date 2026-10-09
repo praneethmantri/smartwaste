@@ -1,15 +1,50 @@
+# Dependencies
 node_modules/
+*/node_modules/
+
+# Production build artifacts
 dist/
 frontend/dist/
+*/dist/
+build/
+*/build/
+
+# Environment configurations and secrets (STRICTLY EXCLUDED)
 .env
+.env.*
+*.env
 backend/.env
 frontend/.env
+*.local
 backend/.pgdata/
 .pgdata/
+
+# Media uploads (stored locally during dev, Cloudinary in prod)
 uploads/*
 !uploads/.gitkeep
 backend/uploads/*
 !backend/uploads/.gitkeep
+backend/uploads/complaints/*
+backend/uploads/completion_proofs/*
+backend/uploads/profiles/*
+backend/uploads/general/*
+
+# Testing & Playwright logs/artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Logs and debugging
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System and Editor
+.vercel/
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
 .system_generated/

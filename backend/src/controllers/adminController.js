@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import prisma from '../config/db.js';
 import { generateComplaintsCsv, generateComplaintsPdfStream } from '../services/reportService.js';
 
@@ -250,6 +251,66 @@ export const exportComplaintsPdf = async (req, res, next) => {
     res.setHeader('Content-Disposition', `attachment; filename=smartwaste-report-${Date.now()}.pdf`);
 
     generateComplaintsPdfStream(complaints, res);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createWorker = async (req, res, next) => {
+  try {
+    const { fullName, email, password, phone, serviceZoneId, employeeCode } = req.body;
+    if (!fullName || !email || !password || !employeeCode) {
+      return res.status(400).json({
+        success: false,
+        message: 'fullName, email, password, and employeeCode are required.',
+      });
+    }
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'A user account with this email address already exists.',
+      });
+    }
+
+    const existingCode = await prisma.worker.findUnique({ where: { employeeCode } });
+    if (existingCode) {
+      return res.status(409).json({
+        success: false,
+        message: 'A worker with this employee code already exists.',
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: {
+        fullName,
+        email,
+        passwordHash,
+        phone: phone || null,
+        role: 'WORKER',
+      },
+    });
+
+    const worker = await prisma.worker.create({
+      data: {
+        userId: user.id,
+        employeeCode,
+        serviceZoneId: serviceZoneId || null,
+        availabilityStatus: 'AVAILABLE',
+      },
+      include: {
+        user: true,
+        serviceZone: true,
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Worker account created successfully.',
+      data: worker,
+    });
   } catch (error) {
     next(error);
   }

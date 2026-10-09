@@ -31,9 +31,31 @@ app.use(
   })
 );
 
+const parseAllowedOrigins = () => {
+  const envUrl = process.env.CLIENT_URL;
+  if (!envUrl || envUrl === '*') return '*';
+  return envUrl.split(',').map((u) => u.trim());
+};
+
+const allowedOrigins = parseAllowedOrigins();
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || '*',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile native, server-to-server, curl)
+      if (!origin || allowedOrigins === '*') return callback(null, true);
+      if (Array.isArray(allowedOrigins) && allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      // Allow any vercel deployment preview if main domain is configured
+      if (origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+      if (process.env.NODE_ENV === 'production') {
+        return callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );

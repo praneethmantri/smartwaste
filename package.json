@@ -11,10 +11,11 @@
     "db:stop": "cd backend && node stop-postgres.js",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
     "build:frontend": "cd frontend && npm run build",
     "db:push": "cd backend && npx prisma db push",
-    "db:seed": "cd backend && node prisma/seed.js",
-    "test": "node --test tests/api.test.js"
+    "test": "node --test tests/api.test.js tests/comprehensive.test.js",
+    "test:e2e": "playwright test"
   },
   "keywords": [
     "smart-waste",
@@ -27,5 +28,8 @@
     "prisma"
   ],
   "author": "B.Tech CSE Community Service Project Team",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.64.0"
+  }
 }

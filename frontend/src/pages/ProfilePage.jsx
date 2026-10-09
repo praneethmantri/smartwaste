@@ -19,6 +19,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { TopAppBar } from '../components/common/TopAppBar';
 import { BottomNav } from '../components/common/BottomNav';
+import { resolveImageUrl } from '../utils/image';
 import api from '../api/client';
 
 export const ProfilePage = () => {
@@ -146,7 +147,7 @@ export const ProfilePage = () => {
           <div className="relative">
             <div className="w-20 h-20 rounded-full bg-emerald-100 border-2 border-[#2E7D32] flex items-center justify-center overflow-hidden shadow">
               {avatarPreview ? (
-                <img src={avatarPreview} alt="Profile" className="w-full h-full object-cover" />
+                <img src={resolveImageUrl(avatarPreview)} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 <span className="text-2xl font-bold text-[#2E7D32]">
                   {user?.fullName?.charAt(0) || 'U'}

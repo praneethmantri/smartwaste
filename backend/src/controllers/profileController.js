@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import prisma from '../config/db.js';
-import { getRelativeUploadPath } from '../config/multer.js';
+import { getRelativeUploadPath, uploadImageToStorage } from '../config/multer.js';
 import { updateProfileSchema, changePasswordSchema } from '../validators/schemas.js';
 
 export const getProfile = async (req, res, next) => {
@@ -44,7 +44,7 @@ export const updateProfile = async (req, res, next) => {
 
     const updateData = { ...validatedData };
     if (req.file) {
-      updateData.profileImage = getRelativeUploadPath(req.file);
+      updateData.profileImage = await uploadImageToStorage(req.file, 'profiles');
     }
 
     const updatedUser = await prisma.user.update({
