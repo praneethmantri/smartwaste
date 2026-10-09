@@ -52,3 +52,32 @@ All key civic operations were tested directly against `https://smartwaste-ruir.o
 - **SPA Routing Rewrites:** Configured in [`frontend/vercel.json`](file:///C:/projects/smartwaste/frontend/vercel.json) — all route refreshes (`/login`, `/dashboard`, `/raise-complaint`, `/admin`, `/worker`) route to `index.html`.
 - **Media Asset Resolver:** [`frontend/src/utils/image.js`](file:///C:/projects/smartwaste/frontend/src/utils/image.js) seamlessly handles Cloudinary CDN links and fallback relative paths.
 - **Automated Tests:** 40/40 integration tests passed with 100% success rate.
+
+---
+
+## 4. Root Cause Analysis: Vercel "3 Packages Installed / vite not found"
+
+### The Issue
+```
+Installing dependencies...
+added 3 packages in 995ms
+sh: line 1: vite: command not found
+Error: Command "vite build" exited with 127
+```
+
+### Exact Technical Root Cause
+1. **Repository Root Directory Execution:**  
+   Vercel's build runner was executing in the repository root (`./`) rather than the `frontend` subfolder.
+2. **Root `package-lock.json` Discrepancy:**  
+   The root `package-lock.json` contained only `@playwright/test` and its two sub-dependencies (`playwright` and `playwright-core`) — totaling **exactly 3 packages**. When `npm install` ran at root, npm accurately installed only those 3 packages.
+3. **Missing `vite` in Production Install:**  
+   Because root had no `vite` binary and root `package.json` lacked a `"build"` script, Vercel fell back to Vite's default `"vite build"`, resulting in `sh: line 1: vite: command not found`.
+
+### Permanent Dual-Layer Resolution Applied
+1. **Moved `vite` to Production `dependencies` in `frontend/package.json`:**  
+   Even if `NODE_ENV=production` is set in Vercel's environment variables, `npm install` will never skip `vite`, `@vitejs/plugin-react`, `tailwindcss`, `postcss`, and `autoprefixer`.
+2. **Added Root Build Delegation in root `package.json`:**  
+   `"build": "cd frontend && npm run build"` was added so any build executed from root automatically delegates to the frontend build.
+3. **Added Root Fallback `vercel.json`:**  
+   Configured root build redirection to `frontend/dist` with SPA rewrites to ensure both root-level and `frontend`-level Vercel builds succeed seamlessly.
+
