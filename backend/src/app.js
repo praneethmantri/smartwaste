@@ -49,6 +49,9 @@ app.use(
       if (origin.endsWith('.vercel.app')) {
         return callback(null, true);
       }
+      if (process.env.NODE_ENV === 'production') {
+        return callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
       return callback(null, true);
     },
     credentials: true,
