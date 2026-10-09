@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Circle, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-<<<<<<< HEAD
-import { MapPin, Navigation, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { useLanguage } from '../../context/LanguageContext';
-=======
 import {
   MapPin,
   Navigation,
@@ -15,7 +11,7 @@ import {
   RefreshCw,
   Check,
 } from 'lucide-react';
->>>>>>> origin/main
+import { useLanguage } from '../../context/LanguageContext';
 
 // Fix Leaflet's default marker icons in Vite/Webpack bundlers
 delete L.Icon.Default.prototype._getIconUrl;
@@ -68,24 +64,13 @@ const LocationMarker = ({ position, setPosition, onManualPick }) => {
 };
 
 export const LocationPicker = ({ initialLat, initialLng, onLocationSelect }) => {
-<<<<<<< HEAD
   const { t } = useLanguage();
-  // Default coordinates (e.g. Visakhapatnam central coordinates)
-  const [position, setPosition] = useState([
-    initialLat || 17.7215,
-    initialLng || 83.2985,
-  ]);
-  const [gpsLoading, setGpsLoading] = useState(false);
-  const [gpsStatus, setGpsStatus] = useState(null); // 'success' | 'denied' | 'error'
-  const [statusMessage, setStatusMessage] = useState('');
-=======
   // Default coordinates (Visakhapatnam central municipal coordinates)
   const defaultCoords = [initialLat || 17.7215, initialLng || 83.2985];
   const [position, setPosition] = useState(defaultCoords);
   const [accuracy, setAccuracy] = useState(null); // in meters
   const [locationSource, setLocationSource] = useState('default'); // 'default' | 'gps' | 'refined' | 'manual'
   const [targetZoom, setTargetZoom] = useState(14);
->>>>>>> origin/main
 
   const [gpsLoading, setGpsLoading] = useState(false);
   const [isWatching, setIsWatching] = useState(false);
@@ -163,22 +148,14 @@ export const LocationPicker = ({ initialLat, initialLng, onLocationSelect }) => 
         setAccuracy(reportedAccuracy);
         setLocationSource('gps');
         setGpsLoading(false);
-<<<<<<< HEAD
         setGpsStatus('success');
-        setStatusMessage(t('gpsCapturedNotice'));
-      },
-      (err) => {
-        setGpsLoading(false);
-        setGpsStatus('denied');
-        setStatusMessage(t('dragPinNotice'));
-=======
 
         const zoom = getZoomForAccuracy(reportedAccuracy);
         setTargetZoom(zoom);
 
         if (reportedAccuracy <= 100) {
           setGpsStatus('success');
-          setStatusMessage(`Accurate to approximately ${Math.round(reportedAccuracy)} meters.`);
+          setStatusMessage(t('gpsCapturedNotice') || `Accurate to approximately ${Math.round(reportedAccuracy)} meters.`);
         } else {
           setGpsStatus('warning');
           setStatusMessage(
@@ -196,7 +173,8 @@ export const LocationPicker = ({ initialLat, initialLng, onLocationSelect }) => 
         if (error.code === error.PERMISSION_DENIED) {
           setGpsStatus('denied');
           setStatusMessage(
-            'Location permission denied. Please allow location access in your browser settings, or tap/drag the map pin to manually place the waste spot.'
+            t('dragPinNotice') ||
+              'Location permission denied. Please allow location access in your browser settings, or tap/drag the map pin to manually place the waste spot.'
           );
         } else if (error.code === error.POSITION_UNAVAILABLE) {
           setGpsStatus('error');
@@ -214,7 +192,6 @@ export const LocationPicker = ({ initialLat, initialLng, onLocationSelect }) => 
             `Unable to determine location: ${error.message || 'Unknown GPS error'}. Please use the map directly.`
           );
         }
->>>>>>> origin/main
       },
       {
         enableHighAccuracy: true,
