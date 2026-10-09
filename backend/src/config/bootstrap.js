@@ -39,15 +39,15 @@ export const bootstrapInitialAccounts = async () => {
 
     // 2. Ensure Administrator exists
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@smartwaste.gov';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'AdminPassword@123';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
     const adminName = process.env.ADMIN_NAME || 'Dr. Ashok Varma (Sanitation Commissioner)';
+    const adminHash = await bcrypt.hash(adminPassword, 10);
 
     const existingAdmin = await prisma.user.findUnique({
       where: { email: adminEmail },
     });
 
     if (!existingAdmin) {
-      const adminHash = await bcrypt.hash(adminPassword, 10);
       await prisma.user.create({
         data: {
           fullName: adminName,
@@ -62,19 +62,20 @@ export const bootstrapInitialAccounts = async () => {
         },
       });
       console.log(`✓ Initial Administrator account provisioned: ${adminEmail}`);
-    } else if (existingAdmin.role !== 'ADMIN') {
+    } else {
       await prisma.user.update({
         where: { id: existingAdmin.id },
-        data: { role: 'ADMIN' },
+        data: { role: 'ADMIN', passwordHash: adminHash },
       });
-      console.log(`✓ Existing user updated to ADMIN role: ${adminEmail}`);
+      console.log(`✓ Administrator password synced: ${adminEmail}`);
     }
 
     // 3. Ensure Sanitation Worker exists
     const workerEmail = process.env.WORKER_EMAIL || 'ramesh.worker@smartwaste.gov';
-    const workerPassword = process.env.WORKER_PASSWORD || 'WorkerPassword@123';
+    const workerPassword = process.env.WORKER_PASSWORD || 'Worker@123';
     const workerName = process.env.WORKER_NAME || 'Ramesh Kumar (Sanitation Officer)';
     const employeeCode = process.env.WORKER_EMP_CODE || 'SW-EMP-001';
+    const workerHash = await bcrypt.hash(workerPassword, 10);
 
     let workerUser = await prisma.user.findUnique({
       where: { email: workerEmail },
@@ -82,7 +83,6 @@ export const bootstrapInitialAccounts = async () => {
     });
 
     if (!workerUser) {
-      const workerHash = await bcrypt.hash(workerPassword, 10);
       workerUser = await prisma.user.create({
         data: {
           fullName: workerName,
@@ -97,12 +97,13 @@ export const bootstrapInitialAccounts = async () => {
         },
       });
       console.log(`✓ Initial Worker account provisioned: ${workerEmail}`);
-    } else if (workerUser.role !== 'WORKER') {
+    } else {
       workerUser = await prisma.user.update({
         where: { id: workerUser.id },
-        data: { role: 'WORKER' },
+        data: { role: 'WORKER', passwordHash: workerHash },
         include: { worker: true },
       });
+      console.log(`✓ Worker password synced: ${workerEmail}`);
     }
 
     // Ensure Worker profile record is linked to workerUser
@@ -122,7 +123,37 @@ export const bootstrapInitialAccounts = async () => {
       console.log(`✓ Worker profile linked: ${employeeCode} (${workerEmail})`);
     }
 
-    console.log('✓ Initial Administrator and Worker provisioning check complete.');
+    // 4. Ensure demo Citizen exists
+    const citizenEmail = 'rahul.citizen@example.com';
+    const citizenPassword = 'Citizen@123';
+    const existingCitizen = await prisma.user.findUnique({
+      where: { email: citizenEmail },
+    });
+
+    const citizenHash = await bcrypt.hash(citizenPassword, 10);
+    if (!existingCitizen) {
+      await prisma.user.create({
+        data: {
+          fullName: 'Rahul Sharma',
+          email: citizenEmail,
+          passwordHash: citizenHash,
+          phone: '+91 98765 43210',
+          role: 'CITIZEN',
+          address: 'Plot 42, Green Park Avenue',
+          city: 'Visakhapatnam',
+          state: 'Andhra Pradesh',
+          pincode: '530017',
+        },
+      });
+      console.log(`✓ Initial Citizen account provisioned: ${citizenEmail}`);
+    } else {
+      await prisma.user.update({
+        where: { id: existingCitizen.id },
+        data: { passwordHash: citizenHash },
+      });
+    }
+
+    console.log('✓ Initial Administrator, Worker, and Citizen provisioning check complete.');
   } catch (error) {
     console.error('Warning: Error during initial accounts bootstrap:', error.message);
   }

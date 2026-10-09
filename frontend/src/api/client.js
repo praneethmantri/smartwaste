@@ -1,8 +1,6 @@
 import axios from 'axios';
 
-const rawBase =
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.DEV ? '/api' : 'https://smartwaste-ruir.onrender.com/api');
+const rawBase = import.meta.env.VITE_API_BASE_URL || '/api';
 const baseURL = rawBase.replace(/\/+$/, '');
 
 const api = axios.create({
