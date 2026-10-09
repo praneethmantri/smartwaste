@@ -6,6 +6,7 @@
   "scripts": {
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
     "build:frontend": "cd frontend && npm run build",
     "db:push": "cd backend && npx prisma db push",
     "test": "node --test tests/api.test.js tests/comprehensive.test.js",
