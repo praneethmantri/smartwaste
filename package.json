@@ -6,12 +6,11 @@
   "scripts": {
     "build": "npm --prefix backend install && npm --prefix frontend install && npm --prefix frontend run build && npm --prefix backend run prisma:generate",
     "start": "node backend/src/server.js",
-    "deploy:build": "npm run build && cd backend && npx prisma db push",
+    "deploy:build": "npm --prefix backend install && npm --prefix frontend install && npm --prefix frontend run build && cd backend && npx prisma db push",
     "db:start": "cd backend && node run-postgres.js",
     "db:stop": "cd backend && node stop-postgres.js",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build",
     "build:frontend": "cd frontend && npm run build",
     "db:push": "cd backend && npx prisma db push",
     "test": "node --test tests/api.test.js tests/comprehensive.test.js",
