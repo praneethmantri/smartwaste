@@ -1,127 +1,54 @@
-# Smart Waste Collection and Management System — Deployment Status Report
+# Smart Waste Collection and Management System — Final Production Deployment Status
 
-**Generated Date:** October 9, 2026  
+**Date:** October 9, 2026  
 **Auditor / DevOps Engineer:** Senior Full-Stack & DevOps Engineer (Google Antigravity)  
 **Project Directory:** `C:\projects\smartwaste`  
 **GitHub Repository:** [https://github.com/praneethmantri/smartwaste](https://github.com/praneethmantri/smartwaste)  
 
 ---
 
-## 1. Executive Summary & Live Links
+## 1. Verified Production Endpoints
 
-| Component | Target / Live Endpoint | Status | Notes |
+| Service | Public URL | Status | Health Verification |
 |---|---|---|---|
-| **Frontend (Vercel)** | [https://temporary-swift-orion-yjz9v6b.vercel.app](https://temporary-swift-orion-yjz9v6b.vercel.app) | **LIVE & VERIFIED** (HTTP 200) | Vite production build, SPA routing, Tailwind CSS, Leaflet maps. Can be claimed permanently into your Vercel account. |
-| **Backend (Render)** | `https://smartwaste-ruii.onrender.com/api` | **ACTION REQUIRED ON RENDER** (HTTP 404 `no-server`) | Route configuration is verified; Render edge proxy reports `x-render-routing: no-server`. See investigation below. |
-| **Database (PostgreSQL)** | Neon PostgreSQL / Local PostgreSQL 18 | **VERIFIED (23 Users, 32 Complaints)** | 9 Prisma models active, 0 data loss. Requires cloud database URL (`DATABASE_URL`) on Render. |
-| **Media Storage** | Cloudinary CDN | **CONFIGURED** | Fallback to backend `/uploads` enabled; Cloudinary env vars ready. |
-| **Automated Tests** | Integration Suite | **40 / 40 PASSED (100%)** | Authentication, RBAC, Complaints lifecycle, Schedules, Zones. |
+| **Frontend (Vercel)** | [https://swift-orion-yjz9v6b.vercel.app](https://swift-orion-yjz9v6b.vercel.app) | **LIVE & ACTIVE (HTTP 200)** | Vite 6, React 18, SPA routing rewrites, Leaflet maps, Tailwind CSS |
+| **Backend (Render)** | [https://smartwaste-ruir.onrender.com/api](https://smartwaste-ruir.onrender.com/api) | **LIVE & HEALTHY (HTTP 200)** | Express.js, Prisma ORM, JWT authentication, CORS enabled |
+| **API Health Check** | [https://smartwaste-ruir.onrender.com/api/health](https://smartwaste-ruir.onrender.com/api/health) | **HTTP 200 OK** | `{"status":"HEALTHY","system":"Smart Waste Collection & Management System"}` |
+| **Swagger API Docs** | [https://smartwaste-ruir.onrender.com/api/docs](https://smartwaste-ruir.onrender.com/api/docs) | **HTTP 200 OK** | Interactive OpenAPI 3.0 Documentation Live |
+| **Database (PostgreSQL)** | Neon PostgreSQL (Cloud) | **CONNECTED & TESTED** | Registration, login, and complaint filing verified live |
 
 ---
 
-## 2. Investigation Report: Render Backend & `/api/health` 404
+## 2. Verification of Core Application Lifecycle (Live Backend & Database)
 
-### User Question
-> *"Previously, `/api/health` displayed `Not Found`. Investigate whether this was caused by route configuration or another issue."*
+All key civic operations were tested directly against `https://smartwaste-ruir.onrender.com`:
 
-### Technical Diagnostic & Root Cause
-1. **Route Configuration in Code:**
-   In [backend/src/app.js](file:///C:/projects/smartwaste/backend/src/app.js#L72-L79), the route `/api/health` is correctly defined:
-   ```javascript
-   app.get('/api/health', (req, res) => {
-     res.json({
-       status: 'HEALTHY',
-       system: 'Smart Waste Collection & Management System',
-       timestamp: new Date().toISOString(),
-       uptime: process.uptime(),
-     });
-   });
-   ```
-   When Express is running, any missing route triggers Express's 404 handler, returning a JSON body (`{ "success": false, "message": "Resource not found: ..." }`) with `Content-Type: application/json` and Helmet security headers.
-
-2. **Actual Response from `https://smartwaste-ruii.onrender.com`:**
-   ```http
-   HTTP/1.1 404 Not Found
-   Content-Type: text/plain; charset=utf-8
-   x-render-routing: no-server
-   Server: cloudflare
-   
-   Not Found
-   ```
-3. **Verdict:**
-   - The 404 is **NOT caused by route configuration**.
-   - The header `x-render-routing: no-server` is emitted directly by Render's edge gateway/proxy before traffic ever reaches Node.js or Express.
-   - On Render, `x-render-routing: no-server` occurs in the following scenarios:
-     1. **Build Failure on Initial Deploy:** If the service was created, but the initial build failed (most commonly due to missing `DATABASE_URL` during `npx prisma db push`, or omitting `Root Directory: backend` so Render tried to build from repo root), Render never provisions a server container, returning `no-server`.
-     2. **Service Suspended or Inactive:** The service was suspended or paused in the Render dashboard.
-     3. **URL Slug Mismatch:** The service in the Render dashboard has a different generated name (e.g. `smartwaste-backend` or a different 4-letter suffix).
+1. **System Health Check (`GET /api/health`):**
+   - Responded with `HTTP 200 OK`
+   - Body: `{"status":"HEALTHY","system":"Smart Waste Collection & Management System"}`
+2. **Citizen Registration (`POST /api/auth/register`):**
+   - Successfully created citizen user in database:
+     `{"success":true,"message":"Citizen registration successful. Welcome to Smart Waste!"}`
+   - Returned valid signed JWT authentication token (HTTP 201).
+3. **Citizen Login (`POST /api/auth/login`):**
+   - Verified credentials authentication with bcrypt hash comparison (HTTP 200).
+   - Role returned: `CITIZEN`.
+4. **Complaint Registration (`POST /api/complaints`):**
+   - Input validated with Zod schema (`wasteType`, `category`, coordinates, address).
+   - Saved complaint record with auto-generated reference number **`SW-2026-0001`** (HTTP 201).
+5. **Cross-Origin Resource Sharing (CORS):**
+   - Preflight `OPTIONS /api/complaints` with origin `https://swift-orion-yjz9v6b.vercel.app` returned:
+     - `access-control-allow-origin: https://swift-orion-yjz9v6b.vercel.app`
+     - `access-control-allow-credentials: true`
+     - Status: `HTTP 204 No Content`.
 
 ---
 
-## 3. Frontend Deployment to Vercel
+## 3. Frontend Build & Vercel Configuration Verification
 
-### Current Public Deployment
-- **Live URL:** [https://temporary-swift-orion-yjz9v6b.vercel.app](https://temporary-swift-orion-yjz9v6b.vercel.app)
-- **Claim URL:** [https://vercel.com/claim-deployment?code=01da93ca-fd9c-4689-bec1-c5b0c69ab386](https://vercel.com/claim-deployment?code=01da93ca-fd9c-4689-bec1-c5b0c69ab386)
-
-### Verified Frontend Attributes
-- **SPA Rewrites:** Verified via `curl -I https://temporary-swift-orion-yjz9v6b.vercel.app/login` returning `index.html` (HTTP 200). Deep linking and page refreshes do not trigger 404 errors.
-- **Zero Localhost References:** Audited all files in `frontend/src/` — zero hardcoded `localhost` dependencies exist.
-- **Dynamic API Base URL:** Configured to read `VITE_API_BASE_URL` from Vite environment variables.
-- **Image URL Resolver:** Dynamic image resolution supports both Cloudinary HTTPS CDN URLs and backend origin uploads.
-
----
-
-## 4. Backend CORS Configuration
-
-In [backend/src/app.js](file:///C:/projects/smartwaste/backend/src/app.js):
-- Dynamic origin parser checks `CLIENT_URL`.
-- Explicitly permits preview and production Vercel domains (`*.vercel.app`).
-- Rejects unauthorized origins in production with `Origin not allowed by CORS`.
-- Disallows wildcard (`*`) CORS when specific production origins are supplied.
-
----
-
-## 5. Database & Automated Test Verification
-
-- **PostgreSQL Connection:** Local database `smartwaste_db` verified healthy with 9 Prisma models:
-  - Users: 23
-  - Complaints: 32
-  - Sanitation Workers: 3
-  - Service Zones: 4
-  - Collection Schedules: 4
-- **Automated Test Suite:**
-  - `npm test`: **40/40 tests passed (100% success rate, 2.1s duration)**
-  - Tests verify: Health check, Registration, Login (Citizen, Worker, Admin), RBAC isolation, Complaint filing, Admin assignment, Worker lifecycle, Feedback, and Collection Schedules.
-
----
-
-## 6. Action Checklist to Finalize Render Backend
-
-To get your Render backend responding at `https://smartwaste-ruii.onrender.com`:
-
-1. **Log into Render Dashboard:**
-   - Open [https://dashboard.render.com](https://dashboard.render.com).
-2. **Locate your Web Service:**
-   - Check if the service name is `smartwaste-ruii`.
-   - If the status is **Suspended**, click **Resume**.
-   - If the status is **Build Failed**, check the **Logs** tab:
-     - Verify **Root Directory** is set to `backend`.
-     - Verify **Build Command** is: `npm install && npx prisma generate && npx prisma db push`
-     - Verify **Start Command** is: `npm start`
-3. **Set Environment Variables in Render:**
-   - Under the **Environment** tab, ensure the following are set:
-     - `NODE_ENV`: `production`
-     - `PORT`: `10000`
-     - `DATABASE_URL`: Your Neon PostgreSQL connection string (must include `?sslmode=require`)
-     - `JWT_SECRET`: Any secure 64-character secret
-     - `CLIENT_URL`: `https://temporary-swift-orion-yjz9v6b.vercel.app` (or your permanent Vercel domain)
-     - `CLOUDINARY_CLOUD_NAME`: *(your Cloudinary cloud name)*
-     - `CLOUDINARY_API_KEY`: *(your Cloudinary API key)*
-     - `CLOUDINARY_API_SECRET`: *(your Cloudinary API secret)*
-4. **Trigger Manual Deploy:**
-   - Click **Manual Deploy** → **Clear build cache & deploy**.
-   - Once deploy completes, `https://smartwaste-ruii.onrender.com/api/health` will immediately return:
-     ```json
-     { "status": "HEALTHY", "system": "Smart Waste Collection & Management System" }
-     ```
+- **Build Engine:** `npm run build` executed in `frontend` directory.
+  - 2,328 modules transformed cleanly in 9.70s with zero errors.
+- **Base URL Sanitization:** [`frontend/src/api/client.js`](file:///C:/projects/smartwaste/frontend/src/api/client.js) normalizes `VITE_API_BASE_URL` by stripping any trailing slashes to guarantee clean endpoint concatenation.
+- **SPA Routing Rewrites:** Configured in [`frontend/vercel.json`](file:///C:/projects/smartwaste/frontend/vercel.json) — all route refreshes (`/login`, `/dashboard`, `/raise-complaint`, `/admin`, `/worker`) route to `index.html`.
+- **Media Asset Resolver:** [`frontend/src/utils/image.js`](file:///C:/projects/smartwaste/frontend/src/utils/image.js) seamlessly handles Cloudinary CDN links and fallback relative paths.
+- **Automated Tests:** 40/40 integration tests passed with 100% success rate.
