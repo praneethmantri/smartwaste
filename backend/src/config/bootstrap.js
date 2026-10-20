@@ -2,8 +2,9 @@ import bcrypt from 'bcryptjs';
 import prisma from './db.js';
 
 /**
- * Non-destructive, idempotent bootstrap for initial Administrator, Worker, and Service Zones.
- * Guarantees that essential system roles exist without deleting or altering existing citizens or complaints.
+ * Non-destructive, idempotent bootstrap for initial Administrator, Worker, Service Zones,
+ * Municipal Officer, Collector Office, and Citizen accounts.
+ * Guarantees that essential system roles exist without deleting or altering existing citizen complaints.
  */
 export const bootstrapInitialAccounts = async () => {
   try {
@@ -39,7 +40,7 @@ export const bootstrapInitialAccounts = async () => {
 
     // 2. Ensure Administrator exists
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@smartwaste.gov';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'AdminPassword@123';
     const adminName = process.env.ADMIN_NAME || 'Dr. Ashok Varma (Sanitation Commissioner)';
     const adminHash = await bcrypt.hash(adminPassword, 10);
 
@@ -72,7 +73,7 @@ export const bootstrapInitialAccounts = async () => {
 
     // 3. Ensure Sanitation Worker exists
     const workerEmail = process.env.WORKER_EMAIL || 'ramesh.worker@smartwaste.gov';
-    const workerPassword = process.env.WORKER_PASSWORD || 'Worker@123';
+    const workerPassword = process.env.WORKER_PASSWORD || 'WorkerPassword@123';
     const workerName = process.env.WORKER_NAME || 'Ramesh Kumar (Sanitation Officer)';
     const employeeCode = process.env.WORKER_EMP_CODE || 'SW-EMP-001';
     const workerHash = await bcrypt.hash(workerPassword, 10);
@@ -125,7 +126,7 @@ export const bootstrapInitialAccounts = async () => {
 
     // 4. Ensure demo Citizen exists
     const citizenEmail = 'rahul.citizen@example.com';
-    const citizenPassword = 'Citizen@123';
+    const citizenPassword = process.env.CITIZEN_PASSWORD || 'CitizenPassword@123';
     const existingCitizen = await prisma.user.findUnique({
       where: { email: citizenEmail },
     });
@@ -153,7 +154,90 @@ export const bootstrapInitialAccounts = async () => {
       });
     }
 
-    console.log('✓ Initial Administrator, Worker, and Citizen provisioning check complete.');
+    // 5. Ensure Municipal Officer (Level 2 Authority) exists
+    const officerEmail = process.env.OFFICER_EMAIL || 'officer@smartwaste.gov';
+    const officerPassword = process.env.OFFICER_PASSWORD || 'OfficerPassword@123';
+    const officerName = process.env.OFFICER_NAME || 'Smt. Lakshmi Devi (Municipal Officer)';
+
+    const existingOfficer = await prisma.user.findUnique({
+      where: { email: officerEmail },
+    });
+
+    if (!existingOfficer) {
+      const officerHash = await bcrypt.hash(officerPassword, 10);
+      await prisma.user.create({
+        data: {
+          fullName: officerName,
+          email: officerEmail,
+          passwordHash: officerHash,
+          phone: '+91 98480 33445',
+          role: 'MUNICIPAL_OFFICER',
+          address: 'Municipal Corporation Commissionerate, Zone 2',
+          city: 'Visakhapatnam',
+          state: 'Andhra Pradesh',
+          pincode: '530002',
+        },
+      });
+      console.log(`✓ Initial Municipal Officer account provisioned: ${officerEmail}`);
+    } else if (existingOfficer.role !== 'MUNICIPAL_OFFICER') {
+      await prisma.user.update({
+        where: { id: existingOfficer.id },
+        data: { role: 'MUNICIPAL_OFFICER' },
+      });
+      console.log(`✓ Existing user updated to MUNICIPAL_OFFICER role: ${officerEmail}`);
+    }
+
+    // 6. Ensure Collector Office (Level 3 Authority) exists
+    const collectorEmail = process.env.COLLECTOR_EMAIL || 'collector@smartwaste.gov';
+    const collectorPassword = process.env.COLLECTOR_PASSWORD || 'CollectorPassword@123';
+    const collectorName = process.env.COLLECTOR_NAME || 'Sri K. S. Rao, IAS (District Collector Office)';
+
+    const existingCollector = await prisma.user.findUnique({
+      where: { email: collectorEmail },
+    });
+
+    if (!existingCollector) {
+      const collectorHash = await bcrypt.hash(collectorPassword, 10);
+      await prisma.user.create({
+        data: {
+          fullName: collectorName,
+          email: collectorEmail,
+          passwordHash: collectorHash,
+          phone: '+91 98480 99887',
+          role: 'COLLECTOR_OFFICE',
+          address: 'District Collectorate, Civil Station',
+          city: 'Visakhapatnam',
+          state: 'Andhra Pradesh',
+          pincode: '530001',
+        },
+      });
+      console.log(`✓ Initial Collector Office account provisioned: ${collectorEmail}`);
+    } else if (existingCollector.role !== 'COLLECTOR_OFFICE') {
+      await prisma.user.update({
+        where: { id: existingCollector.id },
+        data: { role: 'COLLECTOR_OFFICE' },
+      });
+      console.log(`✓ Existing user updated to COLLECTOR_OFFICE role: ${collectorEmail}`);
+    }
+
+    // 7. Non-destructively initialize resolutionDeadline for legacy complaints without deadlines
+    const legacyComplaints = await prisma.complaint.findMany({
+      where: { resolutionDeadline: null },
+      select: { id: true, createdAt: true },
+    });
+    if (legacyComplaints.length > 0) {
+      const l1Hours = Number(process.env.ESCALATION_L1_INTERVAL_HOURS) || 24;
+      for (const c of legacyComplaints) {
+        const deadline = new Date(new Date(c.createdAt).getTime() + l1Hours * 3600 * 1000);
+        await prisma.complaint.update({
+          where: { id: c.id },
+          data: { resolutionDeadline: deadline },
+        });
+      }
+      console.log(`✓ Initialized resolution deadlines for ${legacyComplaints.length} existing complaints.`);
+    }
+
+    console.log('✓ Initial Administrator, Worker, Citizen, Municipal Officer, and Collector provisioning check complete.');
   } catch (error) {
     console.error('Warning: Error during initial accounts bootstrap:', error.message);
   }

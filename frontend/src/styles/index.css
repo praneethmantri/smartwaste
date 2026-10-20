@@ -16,7 +16,7 @@ body {
   background-color: #F5F8F5;
   color: #1F2937;
   -webkit-tap-highlight-color: transparent;
-  font-family: 'Roboto', 'Inter', system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Nirmala UI', 'Noto Sans Devanagari', 'Noto Sans Telugu', 'Gautami', 'Mangal', system-ui, sans-serif;
 }
 
 /* Fix for Leaflet tile z-index and container */

@@ -48,3 +48,45 @@ export const notifyAdmins = async ({ complaintId = null, title, message, type = 
     console.error('[Notify Admins Error]:', error);
   }
 };
+
+export const notifyMunicipalOfficers = async ({ complaintId = null, title, message, type = 'OFFICER_ALERT' }) => {
+  try {
+    const officers = await prisma.user.findMany({
+      where: { role: { in: ['MUNICIPAL_OFFICER', 'ADMIN'] } },
+      select: { id: true },
+    });
+
+    for (const officer of officers) {
+      await createNotification({
+        userId: officer.id,
+        complaintId,
+        title,
+        message,
+        type,
+      });
+    }
+  } catch (error) {
+    console.error('[Notify Municipal Officers Error]:', error);
+  }
+};
+
+export const notifyCollectorOffice = async ({ complaintId = null, title, message, type = 'COLLECTOR_ALERT' }) => {
+  try {
+    const collectorUsers = await prisma.user.findMany({
+      where: { role: { in: ['COLLECTOR_OFFICE', 'ADMIN'] } },
+      select: { id: true },
+    });
+
+    for (const u of collectorUsers) {
+      await createNotification({
+        userId: u.id,
+        complaintId,
+        title,
+        message,
+        type,
+      });
+    }
+  } catch (error) {
+    console.error('[Notify Collector Office Error]:', error);
+  }
+};

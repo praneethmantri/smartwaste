@@ -14,6 +14,8 @@ import {
   ArrowRight,
   Download,
   Sparkles,
+  Shield,
+  Landmark,
 } from 'lucide-react';
 import {
   BarChart,
@@ -178,7 +180,7 @@ export const AdminDashboard = () => {
         </div>
 
         {/* Quick Management Shortcuts */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
           <Link
             to="/admin/complaints"
             className="p-3 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow hover:border-green-300 transition flex items-center space-x-2"
@@ -205,7 +207,21 @@ export const AdminDashboard = () => {
             className="p-3 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow hover:border-green-300 transition flex items-center space-x-2"
           >
             <FileText className="w-4 h-4 text-amber-600" />
-            <span className="text-xs font-bold text-gray-800">{t('csvPdfAudit')}</span>
+            <span className="text-xs font-bold text-gray-800">{t('csvPdfAudit') || 'CSV & PDF'}</span>
+          </Link>
+          <Link
+            to="/municipal-officer"
+            className="p-3 bg-amber-50/70 rounded-2xl border border-amber-200 shadow-sm hover:shadow hover:bg-amber-100/60 transition flex items-center space-x-2"
+          >
+            <Shield className="w-4 h-4 text-amber-700" />
+            <span className="text-xs font-bold text-amber-900">Officer (L2)</span>
+          </Link>
+          <Link
+            to="/collector"
+            className="p-3 bg-indigo-50/70 rounded-2xl border border-indigo-200 shadow-sm hover:shadow hover:bg-indigo-100/60 transition flex items-center space-x-2"
+          >
+            <Landmark className="w-4 h-4 text-indigo-700" />
+            <span className="text-xs font-bold text-indigo-900">Collector (L3)</span>
           </Link>
         </div>
 

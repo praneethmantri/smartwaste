@@ -38,9 +38,25 @@ export const BottomNav = () => {
     { label: t('reports'), to: '/admin/reports', icon: FileText },
   ];
 
+  // Higher Municipal Authority Navigation items
+  const officerItems = [
+    { label: 'Escalations', to: '/municipal-officer', icon: ShieldCheck },
+    { label: 'Alerts', to: '/notifications', icon: Bell, badge: unreadCount },
+    { label: 'Profile', to: '/profile', icon: User },
+  ];
+
+  // District Collector Office Navigation items
+  const collectorItems = [
+    { label: 'Collectorate', to: '/collector', icon: ShieldCheck },
+    { label: 'Alerts', to: '/notifications', icon: Bell, badge: unreadCount },
+    { label: 'Profile', to: '/profile', icon: User },
+  ];
+
   let items = citizenItems;
   if (user?.role === 'WORKER') items = workerItems;
   if (user?.role === 'ADMIN') items = adminItems;
+  if (user?.role === 'MUNICIPAL_OFFICER') items = officerItems;
+  if (user?.role === 'COLLECTOR_OFFICE') items = collectorItems;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-lg pb-safe">

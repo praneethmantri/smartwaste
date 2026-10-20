@@ -94,6 +94,37 @@ export const RegisterPage = () => {
         </div>
 
         <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 space-y-4">
+          {/* Language Selector */}
+          <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
+            <span className="text-xs font-semibold text-gray-500 flex items-center space-x-1">
+              <Globe className="w-3.5 h-3.5 text-[#2E7D32]" />
+              <span>{t('language')}:</span>
+            </span>
+            <div className="flex items-center space-x-1 text-xs">
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                className={`px-2 py-1 rounded-md font-medium transition ${lang === 'en' ? 'bg-[#2E7D32] text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+              >
+                English
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('te')}
+                className={`px-2 py-1 rounded-md font-medium transition ${lang === 'te' ? 'bg-[#2E7D32] text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+              >
+                తెలుగు
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('hi')}
+                className={`px-2 py-1 rounded-md font-medium transition ${lang === 'hi' ? 'bg-[#2E7D32] text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+              >
+                हिन्दी
+              </button>
+            </div>
+          </div>
+
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start space-x-2 text-xs text-red-700">
               <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />

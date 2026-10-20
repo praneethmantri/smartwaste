@@ -11,6 +11,8 @@ enum UserRole {
   CITIZEN
   WORKER
   ADMIN
+  MUNICIPAL_OFFICER
+  COLLECTOR_OFFICE
 }
 
 enum WorkerStatus {
@@ -23,7 +25,9 @@ enum ComplaintStatus {
   SUBMITTED
   ASSIGNED
   IN_PROGRESS
+  ESCALATED
   COMPLETED
+  RESOLVED
   REJECTED
   REOPENED
 }
@@ -57,11 +61,12 @@ model User {
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
-  worker        Worker?
-  complaints    Complaint[]              @relation("CitizenComplaints")
-  statusChanges ComplaintStatusHistory[]
-  notifications Notification[]
-  feedbacks     Feedback[]
+  worker            Worker?
+  complaints        Complaint[]              @relation("CitizenComplaints")
+  statusChanges     ComplaintStatusHistory[]
+  notifications     Notification[]
+  feedbacks         Feedback[]
+  escalationActions EscalationEvent[]        @relation("EscalationActions")
 
   @@map("users")
 }
@@ -136,7 +141,15 @@ model Complaint {
   updatedAt          DateTime          @updatedAt @map("updated_at")
   completedAt        DateTime?         @map("completed_at")
 
+  // Automatic Escalation Attributes
+  escalationLevel       Int               @default(1) @map("escalation_level")
+  resolutionDeadline    DateTime?         @map("resolution_deadline")
+  escalatedAt           DateTime?         @map("escalated_at")
+  collectorInstructions String?           @map("collector_instructions")
+  officerNotes          String?           @map("officer_notes")
+
   statusHistory    ComplaintStatusHistory[]
+  escalationEvents EscalationEvent[]
   completionProofs CompletionProof[]
   feedback         Feedback?
   notifications    Notification[]
@@ -144,6 +157,8 @@ model Complaint {
   @@index([status])
   @@index([citizenId])
   @@index([assignedWorkerId])
+  @@index([escalationLevel])
+  @@index([resolutionDeadline])
   @@map("complaints")
 }
 
@@ -202,4 +217,22 @@ model CompletionProof {
   createdAt   DateTime  @default(now()) @map("created_at")
 
   @@map("completion_proofs")
+}
+
+model EscalationEvent {
+  id          String    @id @default(uuid())
+  complaintId String    @map("complaint_id")
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  fromLevel   Int       @map("from_level")
+  toLevel     Int       @map("to_level")
+  reason      String
+  actionTaken String    @map("action_taken")
+  notes       String?
+  actionById  String?   @map("action_by_id")
+  actionBy    User?     @relation("EscalationActions", fields: [actionById], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([complaintId])
+  @@index([toLevel])
+  @@map("escalation_events")
 }

@@ -65,7 +65,23 @@ export const createComplaintSchema = z.object({
 });
 
 export const updateComplaintStatusSchema = z.object({
-  status: z.enum(['SUBMITTED', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'REJECTED', 'REOPENED']),
+  status: z.enum(['SUBMITTED', 'ASSIGNED', 'IN_PROGRESS', 'ESCALATED', 'COMPLETED', 'RESOLVED', 'REJECTED', 'REOPENED']),
+  notes: z.string().optional(),
+});
+
+export const prioritizeComplaintSchema = z.object({
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'EMERGENCY']),
+  notes: z.string().optional(),
+});
+
+export const collectorInstructionSchema = z.object({
+  instructions: z.string().min(3, 'Instruction text is required'),
+  notes: z.string().optional(),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'EMERGENCY']).optional(),
+  assignedWorkerId: z.string().uuid().optional(),
+});
+
+export const resolveComplaintSchema = z.object({
   notes: z.string().optional(),
 });
 

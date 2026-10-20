@@ -17,8 +17,8 @@ router.use(authenticateJWT);
 router.post('/', upload.single('image'), createComplaint);
 router.get('/', getComplaints);
 router.get('/:id', getComplaintById);
-router.patch('/:id/status', authorizeRoles('WORKER', 'ADMIN'), updateComplaintStatus);
-router.patch('/:id/assign', authorizeRoles('ADMIN'), assignComplaint);
+router.patch('/:id/status', authorizeRoles('WORKER', 'ADMIN', 'MUNICIPAL_OFFICER', 'COLLECTOR_OFFICE'), updateComplaintStatus);
+router.patch('/:id/assign', authorizeRoles('ADMIN', 'MUNICIPAL_OFFICER', 'COLLECTOR_OFFICE'), assignComplaint);
 router.post('/:id/reopen', reopenComplaint);
 
 export default router;

@@ -6,6 +6,7 @@ import {
   assignComplaintSchema,
 } from '../validators/schemas.js';
 import { createNotification, notifyAdmins } from '../services/notificationService.js';
+import { calculateResolutionDeadline } from '../services/escalationService.js';
 
 // Helper to generate reference: SW-YYYY-XXXX
 const generateReference = async () => {
@@ -55,6 +56,8 @@ export const createComplaint = async (req, res, next) => {
         imageUrl,
         serviceZoneId,
         status: 'SUBMITTED',
+        escalationLevel: 1,
+        resolutionDeadline: calculateResolutionDeadline(1),
       },
       include: {
         citizen: {
@@ -234,6 +237,14 @@ export const getComplaintById = async (req, res, next) => {
             },
           },
         },
+        escalationEvents: {
+          orderBy: { createdAt: 'desc' },
+          include: {
+            actionBy: {
+              select: { id: true, fullName: true, role: true },
+            },
+          },
+        },
         completionProofs: {
           orderBy: { createdAt: 'desc' },
           include: {
@@ -304,7 +315,7 @@ export const updateComplaintStatus = async (req, res, next) => {
       }
     }
 
-    const completedAt = status === 'COMPLETED' ? new Date() : existing.completedAt;
+    const completedAt = (status === 'COMPLETED' || status === 'RESOLVED') ? new Date() : existing.completedAt;
 
     const updated = await prisma.complaint.update({
       where: { id },

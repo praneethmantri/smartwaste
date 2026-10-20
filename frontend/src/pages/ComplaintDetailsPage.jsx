@@ -20,6 +20,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { TopAppBar } from '../components/common/TopAppBar';
 import { BottomNav } from '../components/common/BottomNav';
 import { ComplaintMap } from '../components/maps/ComplaintMap';
+import { ComplaintEscalationTimeline } from '../components/common/ComplaintEscalationTimeline';
 import { resolveImageUrl } from '../utils/image';
 import api from '../api/client';
 
@@ -246,6 +247,9 @@ export const ComplaintDetailsPage = () => {
             </div>
           )}
         </div>
+
+        {/* 3-Level Escalation Stepper & Timeline */}
+        <ComplaintEscalationTimeline complaint={complaint} />
 
         {/* Location & Map Card */}
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 space-y-3">

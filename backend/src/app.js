@@ -14,6 +14,7 @@ import feedbackRoutes from './routes/feedbackRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import escalationRoutes from './routes/escalationRoutes.js';
 import { setupSwagger } from './routes/swaggerDocs.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
@@ -93,6 +94,7 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/escalation', escalationRoutes);
 
 // In production or when built frontend exists, serve frontend/dist static files
 const frontendDistPath = path.resolve(__dirname, '../../frontend/dist');

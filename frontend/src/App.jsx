@@ -27,6 +27,8 @@ import { AdminComplaintsPage } from './pages/AdminComplaintsPage';
 import { AdminSchedulesPage } from './pages/AdminSchedulesPage';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import { AdminReportsPage } from './pages/AdminReportsPage';
+import { MunicipalOfficerDashboard } from './pages/MunicipalOfficerDashboard';
+import { CollectorDashboard } from './pages/CollectorDashboard';
 
 export function App() {
   return (
@@ -163,6 +165,26 @@ export function App() {
                 element={
                   <ProtectedRoute allowedRoles={['ADMIN']}>
                     <AdminReportsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Higher Municipal Authority Portal */}
+              <Route
+                path="/municipal-officer"
+                element={
+                  <ProtectedRoute allowedRoles={['MUNICIPAL_OFFICER', 'ADMIN']}>
+                    <MunicipalOfficerDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* District Collector Office Portal */}
+              <Route
+                path="/collector"
+                element={
+                  <ProtectedRoute allowedRoles={['COLLECTOR_OFFICE', 'ADMIN']}>
+                    <CollectorDashboard />
                   </ProtectedRoute>
                 }
               />

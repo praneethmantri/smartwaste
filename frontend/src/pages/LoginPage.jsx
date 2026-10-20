@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, Eye, EyeOff, Lock, Mail, ArrowRight, Shield, User, Wrench, AlertCircle, Sparkles, Globe } from 'lucide-react';
+import {
+  Trash2,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  ArrowRight,
+  Shield,
+  User,
+  Wrench,
+  AlertCircle,
+  Sparkles,
+  Globe,
+  Landmark,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -32,6 +46,10 @@ export const LoginPage = () => {
         navigate('/admin');
       } else if (loggedUser.role === 'WORKER') {
         navigate('/worker');
+      } else if (loggedUser.role === 'MUNICIPAL_OFFICER') {
+        navigate('/municipal-officer');
+      } else if (loggedUser.role === 'COLLECTOR_OFFICE') {
+        navigate('/collector');
       } else {
         navigate('/dashboard');
       }
@@ -83,6 +101,37 @@ export const LoginPage = () => {
 
         {/* Login Card */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-gray-100 space-y-5">
+          {/* Language Selector Header */}
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <span className="text-xs font-semibold text-gray-500 flex items-center space-x-1">
+              <Globe className="w-3.5 h-3.5 text-[#2E7D32]" />
+              <span>{t('language')}:</span>
+            </span>
+            <div className="flex items-center space-x-1 text-xs">
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                className={`px-2 py-1 rounded-md font-medium transition ${lang === 'en' ? 'bg-[#2E7D32] text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+              >
+                English
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('te')}
+                className={`px-2 py-1 rounded-md font-medium transition ${lang === 'te' ? 'bg-[#2E7D32] text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+              >
+                తెలుగు
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('hi')}
+                className={`px-2 py-1 rounded-md font-medium transition ${lang === 'hi' ? 'bg-[#2E7D32] text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+              >
+                हिन्दी
+              </button>
+            </div>
+          </div>
+
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start space-x-2 text-xs text-red-700 animate-fadeIn">
               <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
@@ -154,33 +203,49 @@ export const LoginPage = () => {
             <div className="flex items-center space-x-1 mb-2.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
-                {t('demoAccounts')}
+{t('demoAccounts') || t('auth.demoLogins')}
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => fillDemo('admin@smartwaste.gov', 'AdminPassword@123')}
                 className="py-1.5 px-2 bg-purple-50 hover:bg-purple-100 text-purple-800 text-[11px] font-medium rounded-lg border border-purple-200 flex flex-col items-center justify-center transition"
               >
                 <Shield className="w-3.5 h-3.5 mb-0.5 text-purple-700" />
-                <span>{t('ADMIN')}</span>
+<span>{t('ADMIN') || 'Admin'} (L1)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => fillDemo('officer@smartwaste.gov', 'OfficerPassword@123')}
+                className="py-1.5 px-2 bg-amber-50 hover:bg-amber-100 text-amber-900 text-[11px] font-medium rounded-lg border border-amber-200 flex flex-col items-center justify-center transition"
+              >
+                <Shield className="w-3.5 h-3.5 mb-0.5 text-amber-700" />
+                <span>Officer (L2)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => fillDemo('collector@smartwaste.gov', 'CollectorPassword@123')}
+                className="py-1.5 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 text-[11px] font-medium rounded-lg border border-indigo-200 flex flex-col items-center justify-center transition"
+              >
+                <Landmark className="w-3.5 h-3.5 mb-0.5 text-indigo-700" />
+                <span>Collector (L3)</span>
               </button>
               <button
                 type="button"
                 onClick={() => fillDemo('ramesh.worker@smartwaste.gov', 'WorkerPassword@123')}
-                className="py-1.5 px-2 bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-medium rounded-lg border border-amber-200 flex flex-col items-center justify-center transition"
+                className="py-1.5 px-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-medium rounded-lg border border-emerald-200 flex flex-col items-center justify-center transition"
               >
-                <Wrench className="w-3.5 h-3.5 mb-0.5 text-amber-700" />
-                <span>{t('WORKER')}</span>
+<Wrench className="w-3.5 h-3.5 mb-0.5 text-emerald-700" />
+                <span>{t('WORKER') || 'Worker'}</span>
               </button>
               <button
                 type="button"
                 onClick={() => fillDemo('rahul.citizen@example.com', 'CitizenPassword@123')}
-                className="py-1.5 px-2 bg-green-50 hover:bg-green-100 text-green-800 text-[11px] font-medium rounded-lg border border-green-200 flex flex-col items-center justify-center transition"
+                className="py-1.5 px-2 bg-green-50 hover:bg-green-100 text-green-800 text-[11px] font-medium rounded-lg border border-green-200 flex flex-col items-center justify-center transition col-span-2 sm:col-span-2"
               >
                 <User className="w-3.5 h-3.5 mb-0.5 text-[#2E7D32]" />
-                <span>{t('CITIZEN')}</span>
+<span>{t('CITIZEN') || 'Citizen'} (Rahul)</span>
               </button>
             </div>
           </div>
